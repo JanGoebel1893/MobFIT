@@ -1,0 +1,152 @@
+.metric-card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  min-height: 249px;
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 4px 24px rgba(26, 28, 31, 0.06);
+}
+
+.metric-card__top {
+  width: 100%;
+  padding-bottom: 24px;
+}
+
+.metric-card__icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  color: var(--metric-accent);
+  background: var(--metric-icon-bg);
+}
+
+.metric-card[data-accent='blue'] {
+  --metric-accent: #0058bc;
+  --metric-icon-bg: rgba(0, 88, 188, 0.1);
+  --metric-bar: #0058bc;
+  --metric-glow: rgba(0, 88, 188, 0.3);
+}
+
+.metric-card[data-accent='red'] {
+  --metric-accent: #93000a;
+  --metric-icon-bg: rgba(147, 0, 10, 0.1);
+  --metric-bar: #93000a;
+  --metric-glow: rgba(147, 0, 10, 0.35);
+}
+
+.metric-card[data-accent='green'] {
+  --metric-accent: #006b27;
+  --metric-icon-bg: rgba(0, 107, 39, 0.1);
+  --metric-bar: #006b27;
+  --metric-glow: rgba(0, 107, 39, 0.35);
+}
+
+.metric-card__svg {
+  display: block;
+}
+
+.metric-card__label {
+  margin: 0 0 8px;
+  width: 100%;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: #414755;
+}
+
+.metric-card__values {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0 0 4px;
+  width: 100%;
+}
+
+.metric-card__primary {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-weight: 900;
+  font-size: 36px;
+  line-height: 40px;
+  color: #1a1c1f;
+}
+
+.metric-card__suffix,
+.metric-card__goal {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  color: #717786;
+}
+
+.metric-card__progress {
+  width: 100%;
+  margin-top: auto;
+  padding-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 55px;
+  box-sizing: border-box;
+}
+
+.metric-card__meta {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  min-height: 15px;
+}
+
+.metric-card__fortschritt,
+.metric-card__pct {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 10px;
+  line-height: 15px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #c1c6d7;
+}
+
+.metric-card__complete-label {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 15px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #006b27;
+}
+
+.metric-card__track {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  background: #e8e8ed;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.metric-card__fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  max-width: 100%;
+  background: var(--metric-bar);
+  box-shadow: 0 0 8px var(--metric-glow);
+  border-radius: 9999px;
+  transition: width 0.35s ease;
+}

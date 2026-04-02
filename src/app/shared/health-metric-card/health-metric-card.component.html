@@ -1,0 +1,84 @@
+<article
+  class="metric-card"
+  [attr.data-accent]="tile().accent"
+  [class.metric-card--complete]="tile().goalReached"
+>
+  <div class="metric-card__top">
+    <div class="metric-card__icon-wrap" aria-hidden="true">
+      @switch (tile().icon) {
+        @case ('steps') {
+          <svg class="metric-card__svg" width="20" height="16" viewBox="0 0 24 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M4 16C4 10.5 7.5 6 12 6s8 4.5 8 10"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <path d="M12 16V9" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M12 16h5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        }
+        @case ('run') {
+          <svg class="metric-card__svg" width="16" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="14" cy="4" r="2" stroke="currentColor" stroke-width="2" />
+            <path
+              d="M10 22v-5l-2-5 3-3 2 4h4l3-6"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path d="M6 12l-2 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        }
+        @case ('bike') {
+          <svg class="metric-card__svg" width="24" height="21" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="6" cy="16" r="3" stroke="currentColor" stroke-width="2" />
+            <circle cx="18" cy="16" r="3" stroke="currentColor" stroke-width="2" />
+            <path
+              d="M6 16h4l2-6 3 6h3M9 10l3-4 4 4"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        }
+        @case ('bolt') {
+          <svg class="metric-card__svg" width="16" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M13 2L4 14h7l-1 8 10-12h-7l0-8z"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linejoin="round"
+            />
+          </svg>
+        }
+      }
+    </div>
+  </div>
+
+  <h2 class="metric-card__label">{{ tile().label }}</h2>
+
+  <p class="metric-card__values">
+    <span class="metric-card__primary">{{ tile().currentValue }}</span>
+    @if (tile().currentSuffix) {
+      <span class="metric-card__suffix">{{ tile().currentSuffix }}</span>
+    }
+    <span class="metric-card__goal">{{ tile().goalText }}</span>
+  </p>
+
+  <div class="metric-card__progress">
+    <div class="metric-card__meta">
+      @if (tile().goalReached) {
+        <span class="metric-card__complete-label">Ziel erreicht!</span>
+      } @else {
+        <span class="metric-card__fortschritt">Fortschritt</span>
+        <span class="metric-card__pct">{{ tile().progressPercent }}%</span>
+      }
+    </div>
+    <div class="metric-card__track" role="progressbar" [attr.aria-valuenow]="fillPercent()" aria-valuemin="0" aria-valuemax="100">
+      <div class="metric-card__fill" [style.width.%]="fillPercent()"></div>
+    </div>
+  </div>
+</article>

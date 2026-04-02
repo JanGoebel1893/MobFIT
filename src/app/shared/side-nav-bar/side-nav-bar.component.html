@@ -1,0 +1,58 @@
+<aside class="sidenav" aria-label="Seitenleiste">
+  <div class="sidenav__inner">
+    <div class="sidenav__top">
+      <div class="sidenav__brand-wrap">
+        <a routerLink="/health" class="sidenav__brand">MobFit</a>
+      </div>
+
+      <nav class="sidenav__nav" aria-label="Hauptnavigation">
+        <a
+          routerLink="/my-goals"
+          routerLinkActive="nav-link--active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          ariaCurrentWhenActive="page"
+          class="nav-link"
+        >
+          <span class="nav-link__icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" />
+              <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2" />
+              <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+            </svg>
+          </span>
+          <span class="nav-link__text">My Goals</span>
+        </a>
+        <a
+          routerLink="/health"
+          routerLinkActive="nav-link--active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          ariaCurrentWhenActive="page"
+          class="nav-link"
+        >
+          <span class="nav-link__icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </span>
+          <span class="nav-link__text">Health</span>
+        </a>
+      </nav>
+    </div>
+
+    <div class="sidenav__bottom">
+      <div class="user-card">
+        <div class="user-card__avatar" aria-hidden="true"></div>
+        <div class="user-card__meta">
+          <span class="user-card__name">{{ userName() }}</span>
+          <span class="user-card__hint">{{ userSubtitle() }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</aside>

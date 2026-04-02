@@ -1,0 +1,11 @@
+<section class="health" aria-labelledby="health-heading">
+  <h1 id="health-heading" class="health__title">Health</h1>
+
+  <div class="health__bento" role="list">
+    @for (tile of tiles; track tile.label) {
+      <div class="health__cell" role="listitem">
+        <app-health-metric-card [tile]="tile" />
+      </div>
+    }
+  </div>
+</section>

@@ -1,0 +1,39 @@
+.health {
+  width: 100%;
+  max-width: 960px;
+}
+
+.health__title {
+  margin: 0 0 24px;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: #1a1c1f;
+}
+
+.health__bento {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  width: 100%;
+  max-width: 960px;
+  min-height: 248px;
+}
+
+.health__cell {
+  min-width: 0;
+}
+
+@media (max-width: 1024px) {
+  .health__bento {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .health__bento {
+    grid-template-columns: 1fr;
+  }
+}
