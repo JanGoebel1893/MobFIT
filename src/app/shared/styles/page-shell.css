@@ -1,0 +1,19 @@
+/* Gemeinsames Layout für Dashboard-Seiten (Health, My Goals, …).
+   Negative Ränder = Padding von .outlet-wrap (1.5rem / 1.25rem) ausgleichen. */
+.page-shell {
+  display: flex;
+  flex-direction: column;
+  width: calc(100% + 2.5rem);
+  max-width: none;
+  min-width: 0;
+  box-sizing: border-box;
+  margin: -1.5rem -1.25rem 0;
+}
+
+.page-shell__body {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1120px;
+  margin-inline: auto;
+  padding: 1.5rem clamp(16px, 4vw, 1.25rem) 2rem;
+}
