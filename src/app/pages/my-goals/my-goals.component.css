@@ -1,15 +1,22 @@
 .my-goals {
   display: flex;
   flex-direction: column;
-  min-height: 100%;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  /* Oberkante bündig mit voller Hauptspaltenbreite (Padding der Shell ausgleichen) */
   margin: -24px -32px 0;
   width: calc(100% + 64px);
-  box-sizing: border-box;
 }
 
 .my-goals__body {
-  padding: 24px 32px 32px;
   box-sizing: border-box;
+  width: 100%;
+  /* Etwas breiter als 960px, damit z. B. „8.432 / 10.000“ in den Kacheln genug Platz hat */
+  max-width: 1120px;
+  margin-inline: auto;
+  padding: 24px clamp(16px, 4vw, 32px) 32px;
 }
 
 .goals-hero {
@@ -19,7 +26,6 @@
   justify-content: space-between;
   gap: 10px;
   width: 100%;
-  max-width: 960px;
   min-height: 68px;
   margin-bottom: 24px;
   flex-wrap: wrap;
@@ -32,6 +38,7 @@
   gap: 4px;
   max-width: 454px;
   min-width: 0;
+  flex: 1 1 240px;
 }
 
 .goals-hero__eyebrow {
@@ -59,6 +66,7 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .goals-hero__btn {
@@ -96,15 +104,22 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 24px;
   width: 100%;
-  max-width: 960px;
   min-height: 248px;
 }
 
 .goals-bento__cell {
+  display: flex;
   min-width: 0;
 }
 
-@media (max-width: 1024px) {
+.goals-bento__cell > app-health-metric-card {
+  flex: 1;
+  min-width: 0;
+  display: block;
+}
+
+/* Ab ~4 Spalten + Gaps knapp unter 960px: früher auf 2 Spalten, Kacheln bleiben großzügig */
+@media (max-width: 900px) {
   .goals-bento {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

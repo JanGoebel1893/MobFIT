@@ -18,6 +18,9 @@
 }
 
 .outlet-wrap {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
   padding: 24px 32px 32px;
-  max-width: 72rem;
 }
