@@ -1,12 +1,8 @@
-<main class="shell">
-  <header class="top">
-    <a routerLink="/health" class="brand">MobFIT</a>
-    <nav class="nav" aria-label="Hauptnavigation">
-      <a routerLink="/health" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Health</a>
-      <a routerLink="/my-goals" routerLinkActive="active">My Goals</a>
-    </nav>
-  </header>
-  <div class="outlet-wrap">
-    <router-outlet />
-  </div>
-</main>
+<div class="layout">
+  <app-side-nav-bar />
+  <main class="main">
+    <div class="outlet-wrap">
+      <router-outlet />
+    </div>
+  </main>
+</div>
