@@ -1,6 +1,6 @@
 .health {
   width: 100%;
-  max-width: 960px;
+  max-width: 1120px;
 }
 
 .health__title {
@@ -18,12 +18,19 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 24px;
   width: 100%;
-  max-width: 960px;
+  max-width: 1120px;
   min-height: 232px;
 }
 
 .health__cell {
+  display: flex;
   min-width: 0;
+}
+
+.health__cell > app-health-metric-card {
+  flex: 1;
+  min-width: 0;
+  display: block;
 }
 
 @media (max-width: 1024px) {
