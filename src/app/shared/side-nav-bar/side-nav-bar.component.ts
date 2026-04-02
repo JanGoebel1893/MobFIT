@@ -9,8 +9,6 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   styleUrl: './side-nav-bar.component.css',
 })
 export class SideNavBarComponent {
-  /** Anzeigename im Profilbereich unten */
-  userName = input('MobFit Nutzer');
-  /** Zweite Zeile (z. B. E-Mail oder Status) */
-  userSubtitle = input('Profil');
+  userName = input('MobFit User');
+  userSubtitle = input('32yo • 185cm');
 }

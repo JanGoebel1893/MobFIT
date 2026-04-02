@@ -5,8 +5,8 @@ import { Component } from '@angular/core';
   standalone: true,
   template: `
     <section class="page">
-      <h1>My Goals</h1>
-      <p>Hier verwaltest du deine Fitnessziele.</p>
+      <h1 class="page__title">My Goals</h1>
+      <p class="page__lead">Hier kommt dein Goals-Dashboard hin – Inhalt folgt.</p>
     </section>
   `,
   styles: [
@@ -14,16 +14,18 @@ import { Component } from '@angular/core';
       .page {
         max-width: 42rem;
       }
-      h1 {
-        font-size: 1.75rem;
-        font-weight: 600;
+      .page__title {
         margin: 0 0 0.5rem;
-        letter-spacing: -0.02em;
+        font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+        font-weight: 700;
+        font-size: 28px;
+        color: #1a1c1f;
       }
-      p {
+      .page__lead {
         margin: 0;
-        color: oklch(45% 0.02 300);
+        font-size: 15px;
         line-height: 1.5;
+        color: #64748b;
       }
     `,
   ],
