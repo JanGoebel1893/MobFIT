@@ -1,33 +1,54 @@
 import { Component } from '@angular/core';
+import { GoalsTopNavComponent } from '../../shared/goals-top-nav/goals-top-nav.component';
+import {
+  HealthMetricCardComponent,
+  HealthMetricTileConfig,
+} from '../../shared/health-metric-card/health-metric-card.component';
 
 @Component({
   selector: 'app-my-goals',
   standalone: true,
-  template: `
-    <section class="page">
-      <h1 class="page__title">My Goals</h1>
-      <p class="page__lead">Hier kommt dein Goals-Dashboard hin – Inhalt folgt.</p>
-    </section>
-  `,
-  styles: [
-    `
-      .page {
-        max-width: 42rem;
-      }
-      .page__title {
-        margin: 0 0 0.5rem;
-        font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-        font-weight: 700;
-        font-size: 28px;
-        color: #1a1c1f;
-      }
-      .page__lead {
-        margin: 0;
-        font-size: 15px;
-        line-height: 1.5;
-        color: #64748b;
-      }
-    `,
-  ],
+  imports: [GoalsTopNavComponent, HealthMetricCardComponent],
+  templateUrl: './my-goals.component.html',
+  styleUrl: './my-goals.component.css',
 })
-export class MyGoalsComponent {}
+export class MyGoalsComponent {
+  /** Demo-Daten bis Backend */
+  readonly tiles: readonly HealthMetricTileConfig[] = [
+    {
+      label: 'Schritte',
+      currentValue: '8.432',
+      goalText: '/ 10.000',
+      progressPercent: 84,
+      accent: 'blue',
+      icon: 'steps',
+    },
+    {
+      label: 'Joggen',
+      currentValue: '12.5',
+      currentSuffix: ' km',
+      goalText: '/ 20km',
+      progressPercent: 84,
+      accent: 'blue',
+      icon: 'run',
+    },
+    {
+      label: 'Radfahren',
+      currentValue: '45',
+      currentSuffix: ' min',
+      goalText: '/ 60min',
+      progressPercent: 72,
+      accent: 'red',
+      icon: 'bike',
+    },
+    {
+      label: 'Aktivitätsminuten',
+      currentValue: '32',
+      goalText: '/ 30',
+      progressPercent: 100,
+      accent: 'green',
+      icon: 'bolt',
+      goalReached: true,
+    },
+  ];
+}

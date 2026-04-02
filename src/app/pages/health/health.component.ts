@@ -1,53 +1,45 @@
 import { Component } from '@angular/core';
 import {
-  HealthMetricCardComponent,
-  HealthMetricTileConfig,
-} from '../../shared/health-metric-card/health-metric-card.component';
+  HealthStatCardComponent,
+  HealthStatCardConfig,
+} from '../../shared/health-stat-card/health-stat-card.component';
 
 @Component({
   selector: 'app-health',
   standalone: true,
-  imports: [HealthMetricCardComponent],
+  imports: [HealthStatCardComponent],
   templateUrl: './health.component.html',
   styleUrl: './health.component.css',
 })
 export class HealthComponent {
   /** Statische Demo-Daten bis Backend-Anbindung */
-  readonly tiles: readonly HealthMetricTileConfig[] = [
+  readonly stats: readonly HealthStatCardConfig[] = [
     {
-      label: 'Schritte',
-      currentValue: '8.432',
-      goalText: '/ 10.000',
-      progressPercent: 84,
-      accent: 'blue',
-      icon: 'steps',
+      variant: 'calories',
+      label: 'Kalorien',
+      primaryValue: '1.840',
+      primaryUnit: 'kcal',
+      trendText: '+15% vs. letzter Eintrag',
     },
     {
-      label: 'Joggen',
-      currentValue: '12.5',
-      currentSuffix: ' km',
-      goalText: '/ 20km',
-      progressPercent: 84,
-      accent: 'blue',
-      icon: 'run',
+      variant: 'sleep',
+      label: 'Schlaf',
+      primaryValue: '7h 12m',
+      trendText: '+15% vs. letzter Eintrag',
     },
     {
-      label: 'Radfahren',
-      currentValue: '45',
-      currentSuffix: ' min',
-      goalText: '/ 60min',
-      progressPercent: 72,
-      accent: 'red',
-      icon: 'bike',
+      variant: 'weight',
+      label: 'Gewicht',
+      primaryValue: '82.4',
+      primaryUnit: 'kg',
+      trendText: '+15% vs. letzter Eintrag',
     },
     {
-      label: 'Aktivitätsminuten',
-      currentValue: '32',
-      goalText: '/ 30',
-      progressPercent: 100,
-      accent: 'green',
-      icon: 'bolt',
-      goalReached: true,
+      variant: 'water',
+      label: 'Wasser',
+      primaryValue: '1',
+      primaryUnit: 'Gläser',
+      trendText: '+15% vs. letzter Eintrag',
     },
   ];
 }
