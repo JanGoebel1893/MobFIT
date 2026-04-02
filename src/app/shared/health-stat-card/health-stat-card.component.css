@@ -1,0 +1,144 @@
+.stat-card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 232px;
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 4px 24px rgba(26, 28, 31, 0.06);
+}
+
+.stat-card__head {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  padding-bottom: 24px;
+}
+
+.stat-card__icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.stat-card[data-variant='calories'] .stat-card__icon-wrap {
+  background: rgba(147, 0, 10, 0.1);
+  color: #93000a;
+}
+
+.stat-card[data-variant='sleep'] .stat-card__icon-wrap {
+  background: #d8e2ff;
+  color: #004493;
+}
+
+.stat-card[data-variant='weight'] .stat-card__icon-wrap {
+  background: #e8e8ed;
+  color: #414755;
+}
+
+.stat-card[data-variant='water'] .stat-card__icon-wrap {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.stat-card__svg {
+  display: block;
+}
+
+.stat-card__svg--sm {
+  margin-top: 1px;
+}
+
+.stat-card__svg--water {
+  margin-top: 2px;
+}
+
+.stat-card__menu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #c1c6d7;
+  cursor: pointer;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.stat-card__menu:hover {
+  color: #717786;
+}
+
+.stat-card__label {
+  margin: 0 0 8px;
+  width: 100%;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: #414755;
+}
+
+.stat-card__value-row {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0 0 4px;
+  width: 100%;
+  min-height: 40px;
+}
+
+.stat-card__primary {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 36px;
+  line-height: 40px;
+  color: #1a1c1f;
+}
+
+.stat-card__unit {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  color: #717786;
+}
+
+.stat-card__trend {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 24px;
+  min-height: 40px;
+  box-sizing: border-box;
+}
+
+.stat-card__trend-icon {
+  flex-shrink: 0;
+  color: #006b27;
+  display: block;
+}
+
+.stat-card__trend-text {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  color: #006b27;
+}
