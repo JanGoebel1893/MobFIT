@@ -1,7 +1,13 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
 .goals-top-nav {
   position: sticky;
   top: 0;
   z-index: 5;
+  flex-shrink: 0;
   display: flex;
   flex-direction: row;
   justify-content: space-between;

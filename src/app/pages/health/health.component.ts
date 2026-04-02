@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { GoalsTopNavComponent } from '../../shared/goals-top-nav/goals-top-nav.component';
 import {
   HealthStatCardComponent,
   HealthStatCardConfig,
@@ -7,9 +8,9 @@ import {
 @Component({
   selector: 'app-health',
   standalone: true,
-  imports: [HealthStatCardComponent],
+  imports: [GoalsTopNavComponent, HealthStatCardComponent],
   templateUrl: './health.component.html',
-  styleUrl: './health.component.css',
+  styleUrls: ['./health.component.css', '../../shared/styles/dashboard-shell.css'],
 })
 export class HealthComponent {
   /** Statische Demo-Daten bis Backend-Anbindung */
