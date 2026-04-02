@@ -52,6 +52,10 @@
   display: block;
 }
 
+.metric-card__svg--fill {
+  overflow: visible;
+}
+
 .metric-card__label {
   margin: 0 0 8px;
   width: 100%;
