@@ -7,6 +7,6 @@ import { Component, input } from '@angular/core';
   styleUrl: './goals-top-nav.component.css',
 })
 export class GoalsTopNavComponent {
-  /** Seitentitel in der oberen Leiste */
-  title = input('My Goals Dashboard');
+  /** Titelzeile (nicht `title` nennen – Kollision mit HTML-Attribut) */
+  pageTitle = input('Dashboard');
 }

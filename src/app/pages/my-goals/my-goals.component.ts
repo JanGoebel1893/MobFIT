@@ -10,7 +10,7 @@ import {
   standalone: true,
   imports: [GoalsTopNavComponent, HealthMetricCardComponent],
   templateUrl: './my-goals.component.html',
-  styleUrl: './my-goals.component.css',
+  styleUrls: ['./my-goals.component.css', '../../shared/styles/dashboard-shell.css'],
 })
 export class MyGoalsComponent {
   /** Demo-Daten bis Backend */

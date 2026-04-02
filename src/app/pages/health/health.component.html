@@ -1,11 +1,16 @@
-<section class="health" aria-labelledby="health-heading">
-  <h1 id="health-heading" class="health__title">Health</h1>
+<div class="dashboard-shell">
+  <app-goals-top-nav [pageTitle]="'Health Dashboard'" />
+  <div class="dashboard-shell__inner">
+    <section class="health" aria-labelledby="health-heading">
+      <h2 id="health-heading" class="health__title">Übersicht</h2>
 
-  <div class="health__bento" role="list">
-    @for (s of stats; track s.label) {
-      <div class="health__cell" role="listitem">
-        <app-health-stat-card [stat]="s" />
+      <div class="health__bento" role="list">
+        @for (s of stats; track s.label) {
+          <div class="health__cell" role="listitem">
+            <app-health-stat-card [stat]="s" />
+          </div>
+        }
       </div>
-    }
+    </section>
   </div>
-</section>
+</div>
