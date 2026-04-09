@@ -1,8 +1,12 @@
-<div class="layout">
-  <app-side-nav-bar />
-  <main class="main">
-    <div class="outlet-wrap">
-      <router-outlet />
-    </div>
-  </main>
-</div>
+@if (showAppShell()) {
+  <div class="layout">
+    <app-side-nav-bar />
+    <main class="main">
+      <div class="outlet-wrap">
+        <router-outlet />
+      </div>
+    </main>
+  </div>
+} @else {
+  <router-outlet />
+}

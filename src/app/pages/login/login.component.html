@@ -1,0 +1,73 @@
+<div class="login-page">
+  <div class="login-page__blob login-page__blob--blue" aria-hidden="true"></div>
+  <div class="login-page__blob login-page__blob--green" aria-hidden="true"></div>
+
+  <div class="login-card">
+    <div class="login-hero">
+      <div
+        class="login-hero__image"
+        role="img"
+        aria-label="MobFit Lifestyle"
+      ></div>
+      <div class="login-hero__overlay"></div>
+      <div class="login-hero__content">
+        <p class="login-hero__watermark">MobFit Lifestyle</p>
+        <h1 class="login-hero__brand">MobFit</h1>
+        <p class="login-hero__tagline">
+          Experience the Kinetic Sanctuary. Your performance, curated and elevated.
+        </p>
+      </div>
+    </div>
+
+    <div class="login-panel">
+      <form class="login-form" (ngSubmit)="onSubmit($event)" novalidate>
+        <header class="login-form__intro">
+          <h2 class="login-form__title">Welcome Back</h2>
+        </header>
+
+        <div class="login-form__fields">
+          <div class="login-form__field">
+            <label class="login-form__label" for="login-username">Username</label>
+            <input
+              id="login-username"
+              name="username"
+              type="text"
+              class="login-form__input"
+              placeholder="e.g. alex_kinetic"
+              [(ngModel)]="username"
+              autocomplete="username"
+            />
+          </div>
+
+          <div class="login-form__field">
+            <label class="login-form__label" for="login-password">Password</label>
+            <input
+              id="login-password"
+              name="password"
+              type="password"
+              class="login-form__input"
+              placeholder="••••••••"
+              [(ngModel)]="password"
+              autocomplete="current-password"
+            />
+          </div>
+
+          <div class="login-form__row">
+            <label class="login-form__remember">
+              <input type="checkbox" name="remember" [(ngModel)]="remember" />
+              <span>Remember me</span>
+            </label>
+            <a href="#" class="login-form__forgot" (click)="$event.preventDefault()">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="login-form__submit">Login</button>
+        </div>
+
+        <p class="login-form__footer">
+          New to MobFIT?
+          <a href="#" class="login-form__link" (click)="$event.preventDefault()">Create an account</a>
+        </p>
+      </form>
+    </div>
+  </div>
+</div>
