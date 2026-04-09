@@ -7,6 +7,6 @@ import { Component, input } from '@angular/core';
   styleUrl: './goals-top-nav.component.css',
 })
 export class GoalsTopNavComponent {
-  /** Kurz `navTitle`, damit es nicht mit dem HTML-Attribut `title` kollidiert */
-  navTitle = input('Dashboard');
+  /** Titelzeile (nicht `title` nennen – Kollision mit HTML-Attribut) */
+  pageTitle = input('Dashboard');
 }

@@ -1,31 +1,46 @@
 import { Component } from '@angular/core';
+import { GoalsTopNavComponent } from '../../shared/goals-top-nav/goals-top-nav.component';
+import {
+  HealthStatCardComponent,
+  HealthStatCardConfig,
+} from '../../shared/health-stat-card/health-stat-card.component';
 
 @Component({
   selector: 'app-health',
   standalone: true,
-  template: `
-    <section class="page">
-      <h1>Health</h1>
-      <p>Hier erscheint deine Gesundheitsübersicht.</p>
-    </section>
-  `,
-  styles: [
-    `
-      .page {
-        max-width: 42rem;
-      }
-      h1 {
-        font-size: 1.75rem;
-        font-weight: 600;
-        margin: 0 0 0.5rem;
-        letter-spacing: -0.02em;
-      }
-      p {
-        margin: 0;
-        color: oklch(45% 0.02 300);
-        line-height: 1.5;
-      }
-    `,
-  ],
+  imports: [GoalsTopNavComponent, HealthStatCardComponent],
+  templateUrl: './health.component.html',
+  styleUrls: ['./health.component.css', '../../shared/styles/dashboard-shell.css'],
 })
-export class HealthComponent {}
+export class HealthComponent {
+  /** Statische Demo-Daten bis Backend-Anbindung */
+  readonly stats: readonly HealthStatCardConfig[] = [
+    {
+      variant: 'calories',
+      label: 'Kalorien',
+      primaryValue: '1.840',
+      primaryUnit: 'kcal',
+      trendText: '+15% vs. letzter Eintrag',
+    },
+    {
+      variant: 'sleep',
+      label: 'Schlaf',
+      primaryValue: '7h 12m',
+      trendText: '+15% vs. letzter Eintrag',
+    },
+    {
+      variant: 'weight',
+      label: 'Gewicht',
+      primaryValue: '82.4',
+      primaryUnit: 'kg',
+      trendText: '+15% vs. letzter Eintrag',
+    },
+    {
+      variant: 'water',
+      label: 'Wasser',
+      primaryValue: '1',
+      primaryUnit: 'Gläser',
+      trendText: '+15% vs. letzter Eintrag',
+    },
+  ];
+}

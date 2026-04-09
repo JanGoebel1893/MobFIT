@@ -1,9 +1,16 @@
-<div class="page-shell">
-  <app-goals-top-nav [navTitle]="'Health Dashboard'" />
-  <div class="page-shell__body">
-    <section class="health-content" aria-labelledby="health-heading">
-      <h2 id="health-heading" class="health-content__title">Health</h2>
-      <p class="health-content__lead">Hier erscheint deine Gesundheitsübersicht.</p>
+<div class="dashboard-shell">
+  <app-goals-top-nav [pageTitle]="'Health Dashboard'" />
+  <div class="dashboard-shell__inner">
+    <section class="health" aria-labelledby="health-heading">
+      <h2 id="health-heading" class="health__title">Übersicht</h2>
+
+      <div class="health__bento" role="list">
+        @for (s of stats; track s.label) {
+          <div class="health__cell" role="listitem">
+            <app-health-stat-card [stat]="s" />
+          </div>
+        }
+      </div>
     </section>
   </div>
 </div>
