@@ -12,10 +12,40 @@ import { SupabaseService } from '../../services/supabase.service';
 })
 export class RegisterComponent implements OnInit, OnDestroy {
   username = '';
+  email = '';
   password = '';
   age: number | null = null;
   heightCm: number | null = null;
   agreeTerms = false;
+
+  /** Mindestlänge Passwort (Anzeige + Validierung) */
+  readonly passwordMinLength = 8;
+
+  get isRegisterFormValid(): boolean {
+    const user = this.username.trim();
+    const mail = this.email.trim();
+    const pass = this.password;
+    if (!user || !mail || !pass || pass.length < this.passwordMinLength) {
+      return false;
+    }
+    if (!this.isValidEmail(mail)) {
+      return false;
+    }
+    if (this.age == null || Number.isNaN(this.age) || this.age < 1 || this.age > 120) {
+      return false;
+    }
+    if (this.heightCm == null || Number.isNaN(this.heightCm) || this.heightCm < 50 || this.heightCm > 300) {
+      return false;
+    }
+    if (!this.agreeTerms) {
+      return false;
+    }
+    return true;
+  }
+
+  private isValidEmail(value: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  }
 
   private prevHtmlOverflow = '';
   private prevBodyOverflow = '';
@@ -36,6 +66,14 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   onSubmit(event: Event): void {
     event.preventDefault();
+    if (!this.isRegisterFormValid) {
+      return;
+    }
+    const form = event.currentTarget as HTMLFormElement;
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
     this.onRegister();
   }
 

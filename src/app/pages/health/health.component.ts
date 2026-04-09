@@ -4,17 +4,23 @@ import {
   HealthStatCardComponent,
   HealthStatCardConfig,
 } from '../../shared/health-stat-card/health-stat-card.component';
+import {
+  HealthDataFormValues,
+  HealthDataModalComponent,
+} from '../../shared/health-data-modal/health-data-modal.component';
 
 @Component({
   selector: 'app-health',
   standalone: true,
-  imports: [GoalsTopNavComponent, HealthStatCardComponent],
+  imports: [GoalsTopNavComponent, HealthStatCardComponent, HealthDataModalComponent],
   templateUrl: './health.component.html',
   styleUrls: ['./health.component.css', '../../shared/styles/dashboard-shell.css'],
 })
 export class HealthComponent {
-  /** Statische Demo-Daten bis Backend-Anbindung */
-  readonly stats: readonly HealthStatCardConfig[] = [
+  showHealthDataModal = false;
+
+  /** Demo-Daten bis Backend-Anbindung */
+  stats: HealthStatCardConfig[] = [
     {
       variant: 'calories',
       label: 'Kalorien',
@@ -43,4 +49,28 @@ export class HealthComponent {
       trendText: '+15% vs. letzter Eintrag',
     },
   ];
+
+  openHealthDataModal(): void {
+    this.showHealthDataModal = true;
+  }
+
+  closeHealthDataModal(): void {
+    this.showHealthDataModal = false;
+  }
+
+  onHealthDataSave(v: HealthDataFormValues): void {
+    const calDigits = v.caloriesKcal.replace(/[^\d]/g, '');
+    const calNum = parseInt(calDigits, 10);
+    const calDisplay =
+      calDigits && !Number.isNaN(calNum) ? calNum.toLocaleString('de-DE') : v.caloriesKcal.trim();
+
+    const sleepDisplay = `${v.sleepHours.trim()}h ${v.sleepMinutes.trim()}m`.trim();
+
+    this.stats = [
+      { ...this.stats[0], primaryValue: calDisplay, primaryUnit: 'kcal' },
+      { ...this.stats[1], primaryValue: sleepDisplay, primaryUnit: undefined },
+      { ...this.stats[2], primaryValue: v.weightKg.trim(), primaryUnit: 'kg' },
+      { ...this.stats[3], primaryValue: v.waterLiters.trim(), primaryUnit: 'Liter' },
+    ];
+  }
 }

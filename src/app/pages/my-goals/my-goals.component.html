@@ -7,7 +7,7 @@
         <h2 id="goals-hero-heading" class="goals-hero__headline">Da is meine Oma ja besser!</h2>
       </div>
       <div class="goals-hero__actions">
-        <button type="button" class="goals-hero__btn goals-hero__btn--goals">
+        <button type="button" class="goals-hero__btn goals-hero__btn--goals" (click)="openSetGoalsModal()">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path
               d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4L16.5 3.5z"
@@ -19,7 +19,7 @@
           </svg>
           Goals
         </button>
-        <button type="button" class="goals-hero__btn goals-hero__btn--add">
+        <button type="button" class="goals-hero__btn goals-hero__btn--add" (click)="openProgressModal()">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path d="M12 5v14M5 12h14" stroke="#1e1e1e" stroke-width="3.5" stroke-linecap="round" />
           </svg>
@@ -36,4 +36,11 @@
       }
     </div>
   </div>
+
+  <app-goals-metric-modal
+    [open]="modal !== 'off'"
+    [variant]="modal === 'addProgress' ? 'addProgress' : 'setGoals'"
+    (closed)="closeModal()"
+    (setGoalsSubmit)="onSetGoalsSubmit($event)"
+  />
 </div>
