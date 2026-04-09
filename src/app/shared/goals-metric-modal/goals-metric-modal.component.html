@@ -1,0 +1,228 @@
+@if (open()) {
+  <div class="gmm-overlay" (click)="onBackdropClick()" role="presentation">
+    <div
+      class="gmm"
+      [class.gmm--progress]="variant() === 'addProgress'"
+      (click)="$event.stopPropagation()"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-labelledby]="variant() === 'setGoals' ? 'gmm-title-goals' : 'gmm-title-progress'"
+    >
+      <header class="gmm__header">
+        <div class="gmm__header-text">
+          @if (variant() === 'setGoals') {
+            <h2 id="gmm-title-goals" class="gmm__title">Deine Ziele festlegen</h2>
+            <p class="gmm__subtitle">Definiere deine Ziele für diese Woche</p>
+          } @else {
+            <h2 id="gmm-title-progress" class="gmm__title">Fortschritt ergänzen</h2>
+            <p class="gmm__subtitle">Ergänze deinen Fortschritt, um deinem Ziel näher zu kommen.</p>
+          }
+        </div>
+        <button type="button" class="gmm__close" (click)="close()" aria-label="Schließen">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </button>
+      </header>
+
+      <div class="gmm__body">
+        <div class="gmm__grid">
+          <!-- Schritte -->
+          <div class="gmm-field">
+            <div class="gmm-field__label">
+              <span class="gmm-field__icon gmm-field__icon--blue" aria-hidden="true">
+                <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M10 14.5a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13Z"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  />
+                  <path d="M10 4v4l3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                  <path
+                    d="M3.5 14.5c1.2-2.2 3.8-3.5 6.5-3.5s5.3 1.3 6.5 3.5"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </span>
+              <span class="gmm-field__label-text">Schritte</span>
+            </div>
+            @if (variant() === 'setGoals') {
+              <div class="gmm-field__shell">
+                <input
+                  class="gmm-field__control"
+                  type="text"
+                  inputmode="numeric"
+                  name="steps"
+                  [(ngModel)]="setGoalsModel.steps"
+                  placeholder="25"
+                />
+              </div>
+            } @else {
+              <div class="gmm-field__shell gmm-field__shell--progress">
+                <input
+                  class="gmm-field__control gmm-field__control--bold"
+                  type="text"
+                  inputmode="numeric"
+                  name="p-steps"
+                  [(ngModel)]="progressModel.steps"
+                />
+                <button type="button" class="gmm-field__plus" (click)="onAddProgress('steps')" aria-label="Fortschritt hinzufügen">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M7 1v12M1 7h12" stroke="#006B27" stroke-width="3.5" stroke-linecap="round" />
+                  </svg>
+                </button>
+              </div>
+            }
+          </div>
+
+          <!-- Joggen -->
+          <div class="gmm-field">
+            <div class="gmm-field__label">
+              <span class="gmm-field__icon gmm-field__icon--blue" aria-hidden="true">
+                <svg width="16" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="14.5" cy="5" r="2.25" stroke="currentColor" stroke-width="2" />
+                  <path
+                    d="M13.5 7.5 10 11l2 4.5-2.5 7M13.5 7.5l5 1.5 2.5 7.5M10 11l-4-1M18.5 9l3-2.5M8 14.5l-3 3"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+              <span class="gmm-field__label-text">Joggen</span>
+            </div>
+            @if (variant() === 'setGoals') {
+              <div class="gmm-field__shell">
+                <input
+                  class="gmm-field__control gmm-field__control--with-unit"
+                  type="text"
+                  inputmode="decimal"
+                  name="jog"
+                  [(ngModel)]="setGoalsModel.jogKm"
+                  placeholder="45"
+                />
+                <span class="gmm-field__unit">km</span>
+              </div>
+            } @else {
+              <div class="gmm-field__shell gmm-field__shell--progress">
+                <input
+                  class="gmm-field__control gmm-field__control--bold gmm-field__control--with-unit"
+                  type="text"
+                  inputmode="decimal"
+                  name="p-jog"
+                  [(ngModel)]="progressModel.jogKm"
+                />
+                <span class="gmm-field__unit">km</span>
+                <button type="button" class="gmm-field__plus" (click)="onAddProgress('jogKm')" aria-label="Fortschritt hinzufügen">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M7 1v12M1 7h12" stroke="#006B27" stroke-width="3.5" stroke-linecap="round" />
+                  </svg>
+                </button>
+              </div>
+            }
+          </div>
+
+          <!-- Radfahren -->
+          <div class="gmm-field">
+            <div class="gmm-field__label">
+              <span class="gmm-field__icon gmm-field__icon--red" aria-hidden="true">
+                <svg width="24" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="6.5" cy="17" r="3.5" stroke="currentColor" stroke-width="2" />
+                  <circle cx="18.5" cy="17" r="3.5" stroke="currentColor" stroke-width="2" />
+                  <path
+                    d="M6.5 17h4l2.5-8 3.5 8h1.5M13 9l2.5-4.5H19M13 9h4.5"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+              <span class="gmm-field__label-text">Radfahren</span>
+            </div>
+            @if (variant() === 'setGoals') {
+              <div class="gmm-field__shell">
+                <input
+                  class="gmm-field__control gmm-field__control--with-unit"
+                  type="text"
+                  inputmode="numeric"
+                  name="bike"
+                  [(ngModel)]="setGoalsModel.bikeMin"
+                  placeholder="25"
+                />
+                <span class="gmm-field__unit">min</span>
+              </div>
+            } @else {
+              <div class="gmm-field__shell gmm-field__shell--progress">
+                <input
+                  class="gmm-field__control gmm-field__control--bold gmm-field__control--with-unit"
+                  type="text"
+                  inputmode="numeric"
+                  name="p-bike"
+                  [(ngModel)]="progressModel.bikeMin"
+                />
+                <span class="gmm-field__unit">min</span>
+                <button type="button" class="gmm-field__plus" (click)="onAddProgress('bikeMin')" aria-label="Fortschritt hinzufügen">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M7 1v12M1 7h12" stroke="#006B27" stroke-width="3.5" stroke-linecap="round" />
+                  </svg>
+                </button>
+              </div>
+            }
+          </div>
+
+          <!-- Aktivitätsminuten -->
+          <div class="gmm-field">
+            <div class="gmm-field__label">
+              <span class="gmm-field__icon gmm-field__icon--purple" aria-hidden="true">
+                <svg width="16" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path fill="currentColor" d="M14.5 1.5 5 15.5h6.5L10 22.5 19 10.5h-6.2l1.7-9z" />
+                </svg>
+              </span>
+              <span class="gmm-field__label-text">Aktivitätsminuten</span>
+            </div>
+            @if (variant() === 'setGoals') {
+              <div class="gmm-field__shell">
+                <input
+                  class="gmm-field__control gmm-field__control--with-unit"
+                  type="text"
+                  inputmode="numeric"
+                  name="activity"
+                  [(ngModel)]="setGoalsModel.activityMin"
+                  placeholder="45"
+                />
+                <span class="gmm-field__unit">min</span>
+              </div>
+            } @else {
+              <div class="gmm-field__shell gmm-field__shell--progress">
+                <input
+                  class="gmm-field__control gmm-field__control--bold gmm-field__control--with-unit"
+                  type="text"
+                  inputmode="numeric"
+                  name="p-activity"
+                  [(ngModel)]="progressModel.activityMin"
+                />
+                <span class="gmm-field__unit">min</span>
+                <button type="button" class="gmm-field__plus" (click)="onAddProgress('activityMin')" aria-label="Fortschritt hinzufügen">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M7 1v12M1 7h12" stroke="#006B27" stroke-width="3.5" stroke-linecap="round" />
+                  </svg>
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      @if (variant() === 'setGoals') {
+        <footer class="gmm__footer">
+          <button type="button" class="gmm__btn gmm__btn--ghost" (click)="close()">Cancel</button>
+          <button type="button" class="gmm__btn gmm__btn--primary" (click)="onSubmitSetGoals()">Set Goal</button>
+        </footer>
+      }
+    </div>
+  </div>
+}
