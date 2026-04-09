@@ -69,11 +69,13 @@ export class RegisterComponent implements OnInit, OnDestroy {
     if (!this.isRegisterFormValid) {
       return;
     }
+
     const form = event.currentTarget as HTMLFormElement;
     if (!form.checkValidity()) {
       form.reportValidity();
       return;
     }
+
     this.onRegister();
   }
 
