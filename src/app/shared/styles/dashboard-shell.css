@@ -1,0 +1,19 @@
+/* Gemeinsame Hülle: Top-Nav volle Breite der Spalte, Inhalt max. 1120px zentriert.
+   Negative Ränder gleichen .outlet-wrap padding (24px / 32px) aus. */
+.dashboard-shell {
+  display: flex;
+  flex-direction: column;
+  width: calc(100% + 64px);
+  max-width: none;
+  min-width: 0;
+  box-sizing: border-box;
+  margin: -24px -32px 0;
+}
+
+.dashboard-shell__inner {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1120px;
+  margin-inline: auto;
+  padding: 24px clamp(16px, 4vw, 32px) 32px;
+}

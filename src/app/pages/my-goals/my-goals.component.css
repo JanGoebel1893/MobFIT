@@ -1,0 +1,116 @@
+.goals-hero {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  min-height: 68px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.goals-hero__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  max-width: 454px;
+  min-width: 0;
+  flex: 1 1 240px;
+}
+
+.goals-hero__eyebrow {
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  color: #414755;
+}
+
+.goals-hero__headline {
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 36px;
+  line-height: 40px;
+  letter-spacing: -0.9px;
+  color: #1a1c1f;
+}
+
+.goals-hero__actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.goals-hero__btn {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 15px 25px;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 17px;
+  color: #000000;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.goals-hero__btn:hover {
+  opacity: 0.92;
+}
+
+.goals-hero__btn--goals {
+  background: #f9f9fe;
+}
+
+.goals-hero__btn--add {
+  background: rgba(0, 107, 39, 0.1);
+}
+
+.goals-bento {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  width: 100%;
+  min-height: 248px;
+}
+
+.goals-bento__cell {
+  display: flex;
+  min-width: 0;
+}
+
+.goals-bento__cell > app-health-metric-card {
+  flex: 1;
+  min-width: 0;
+  display: block;
+}
+
+/* Ab ~4 Spalten + Gaps knapp unter 960px: früher auf 2 Spalten, Kacheln bleiben großzügig */
+@media (max-width: 900px) {
+  .goals-bento {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .goals-bento {
+    grid-template-columns: 1fr;
+  }
+
+  .goals-hero__headline {
+    font-size: 28px;
+    line-height: 32px;
+  }
+}

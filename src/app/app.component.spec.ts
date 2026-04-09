@@ -23,10 +23,17 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('mobfit');
   });
 
-  it('should render brand', () => {
+  it('should have a router outlet', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.brand')?.textContent?.trim()).toBe('MobFIT');
+    expect(compiled.querySelector('router-outlet')).toBeTruthy();
+  });
+
+  it('should render side navigation brand', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('.sidenav__brand')?.textContent?.trim()).toBe('MobFit');
   });
 });
