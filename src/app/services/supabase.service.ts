@@ -17,6 +17,9 @@ export class SupabaseService {
     const { data, error } = await this.supabase.auth.signUp({ email, password });
     if (error) throw error;
 
+    const { error: signInError } = await this.supabase.auth.signInWithPassword({ email, password });
+    if (signInError) throw signInError;
+
     const { error: profileError } = await this.supabase.from("profiles").insert({
       id: data.user!.id,
       username,

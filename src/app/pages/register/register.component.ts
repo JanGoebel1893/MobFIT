@@ -82,7 +82,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   async onRegister() {
     try {
       await this.supabase.signUp(
-        "test@test.com", this.password,
+        this.email, this.password,
         this.username, this.age!, this.heightCm!
       );
     } catch(error) {
