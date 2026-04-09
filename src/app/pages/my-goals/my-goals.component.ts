@@ -4,15 +4,24 @@ import {
   HealthMetricCardComponent,
   HealthMetricTileConfig,
 } from '../../shared/health-metric-card/health-metric-card.component';
+import {
+  GoalsMetricModalComponent,
+  GoalsMetricValues,
+} from '../../shared/goals-metric-modal/goals-metric-modal.component';
+
+type GoalsModalKind = 'off' | 'setGoals' | 'addProgress';
 
 @Component({
   selector: 'app-my-goals',
   standalone: true,
-  imports: [GoalsTopNavComponent, HealthMetricCardComponent],
+  imports: [GoalsTopNavComponent, HealthMetricCardComponent, GoalsMetricModalComponent],
   templateUrl: './my-goals.component.html',
   styleUrls: ['./my-goals.component.css', '../../shared/styles/dashboard-shell.css'],
 })
 export class MyGoalsComponent {
+  /** Welches Metrik-Popup offen ist (nur eines) */
+  modal: GoalsModalKind = 'off';
+
   /** Demo-Daten bis Backend */
   readonly tiles: readonly HealthMetricTileConfig[] = [
     {
@@ -51,4 +60,20 @@ export class MyGoalsComponent {
       goalReached: true,
     },
   ];
+
+  openSetGoalsModal(): void {
+    this.modal = 'setGoals';
+  }
+
+  openProgressModal(): void {
+    this.modal = 'addProgress';
+  }
+
+  closeModal(): void {
+    this.modal = 'off';
+  }
+
+  onSetGoalsSubmit(_values: GoalsMetricValues): void {
+    // Anbindung API folgt
+  }
 }
