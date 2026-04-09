@@ -1,0 +1,8 @@
+Lege dein Hero-Bild für die linke Login-Seite hier ab:
+
+  Dateiname: login-hero.png
+  Pfad:      public/images/login-hero.png
+
+In WebStorm: Bild per Drag & Drop in diesen Ordner legen oder „Copy path“ → hier einfügen.
+
+Unterstützt: PNG, JPG, WebP (bei anderem Namen in login.component.css die URL anpassen).
