@@ -22,7 +22,7 @@
     </div>
 
     <div class="register-panel">
-      <form class="register-form" (ngSubmit)="onSubmit($event)" novalidate>
+      <form class="register-form" (ngSubmit)="onSubmit($event)">
         <header class="register-form__intro">
           <h1 class="register-form__title">Create Account</h1>
         </header>
@@ -39,6 +39,8 @@
                 placeholder="e.g. alex_kinetic"
                 [(ngModel)]="username"
                 autocomplete="username"
+                required
+                aria-required="true"
               />
               <span class="register-form__input-icon" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -62,6 +64,8 @@
                 placeholder="••••••••"
                 [(ngModel)]="password"
                 autocomplete="new-password"
+                required
+                aria-required="true"
               />
               <span class="register-form__input-icon" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -87,6 +91,8 @@
                 min="1"
                 max="120"
                 inputmode="numeric"
+                required
+                aria-required="true"
               />
             </div>
             <div class="register-form__field">
@@ -101,12 +107,20 @@
                 min="50"
                 max="300"
                 inputmode="numeric"
+                required
+                aria-required="true"
               />
             </div>
           </div>
 
           <label class="register-form__terms">
-            <input type="checkbox" name="terms" [(ngModel)]="agreeTerms" />
+            <input
+              type="checkbox"
+              name="terms"
+              [(ngModel)]="agreeTerms"
+              required
+              aria-required="true"
+            />
             <span class="register-form__terms-text">
               I agree to the
               <a href="#" class="register-form__inline-link" (click)="$event.preventDefault()">Terms of Service</a>

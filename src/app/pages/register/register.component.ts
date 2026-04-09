@@ -33,6 +33,11 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   onSubmit(event: Event): void {
     event.preventDefault();
+    const form = event.currentTarget as HTMLFormElement;
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
     // Registrierungs-API folgt
   }
 }
