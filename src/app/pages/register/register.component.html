@@ -1,0 +1,128 @@
+<div class="register-page">
+  <div class="register-card">
+    <div class="register-hero" aria-hidden="false">
+      <div class="register-hero__image" aria-hidden="true"></div>
+      <div class="register-hero__gradient"></div>
+      <div class="register-hero__content">
+        <h2 class="register-hero__title">Elevate your baseline.</h2>
+        <p class="register-hero__text">
+          Join the sanctuary where kinetic energy meets premium data tracking. Start your journey today.
+        </p>
+        <div class="register-hero__stats">
+          <div class="register-hero__stat">
+            <span class="register-hero__stat-value">12k+</span>
+            <span class="register-hero__stat-label">Active athletes</span>
+          </div>
+          <div class="register-hero__stat">
+            <span class="register-hero__stat-value">98%</span>
+            <span class="register-hero__stat-label">Goal success</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="register-panel">
+      <form class="register-form" (ngSubmit)="onSubmit($event)" novalidate>
+        <header class="register-form__intro">
+          <h1 class="register-form__title">Create Account</h1>
+        </header>
+
+        <div class="register-form__fields">
+          <div class="register-form__field">
+            <label class="register-form__label" for="reg-username">Username</label>
+            <div class="register-form__input-wrap">
+              <input
+                id="reg-username"
+                name="username"
+                type="text"
+                class="register-form__input"
+                placeholder="e.g. alex_kinetic"
+                [(ngModel)]="username"
+                autocomplete="username"
+              />
+              <span class="register-form__input-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="register-form__field">
+            <label class="register-form__label" for="reg-password">Password</label>
+            <div class="register-form__input-wrap">
+              <input
+                id="reg-password"
+                name="password"
+                type="password"
+                class="register-form__input"
+                placeholder="••••••••"
+                [(ngModel)]="password"
+                autocomplete="new-password"
+              />
+              <span class="register-form__input-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M18 10h-1V8a5 5 0 0 0-10 0v2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2Zm-9-2a3 3 0 0 1 6 0v2H9V8Zm9 12H6v-8h12v8Zm-6-3a1 1 0 0 1 1 1 1 1 0 0 1-2 0 1 1 0 0 1 1-1Z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="register-form__row-2">
+            <div class="register-form__field">
+              <label class="register-form__label" for="reg-age">Alter</label>
+              <input
+                id="reg-age"
+                name="age"
+                type="number"
+                class="register-form__input"
+                placeholder="25"
+                [(ngModel)]="age"
+                min="1"
+                max="120"
+                inputmode="numeric"
+              />
+            </div>
+            <div class="register-form__field">
+              <label class="register-form__label" for="reg-height">Größe (cm)</label>
+              <input
+                id="reg-height"
+                name="heightCm"
+                type="number"
+                class="register-form__input"
+                placeholder="180"
+                [(ngModel)]="heightCm"
+                min="50"
+                max="300"
+                inputmode="numeric"
+              />
+            </div>
+          </div>
+
+          <label class="register-form__terms">
+            <input type="checkbox" name="terms" [(ngModel)]="agreeTerms" />
+            <span class="register-form__terms-text">
+              I agree to the
+              <a href="#" class="register-form__inline-link" (click)="$event.preventDefault()">Terms of Service</a>
+              and
+              <a href="#" class="register-form__inline-link" (click)="$event.preventDefault()">Privacy Policy</a>.
+            </span>
+          </label>
+
+          <button type="submit" class="register-form__submit">Register</button>
+        </div>
+
+        <p class="register-form__footer">
+          Already have an account?
+          <a routerLink="/login" class="register-form__link">Login</a>
+        </p>
+      </form>
+    </div>
+  </div>
+</div>
