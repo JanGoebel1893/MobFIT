@@ -9,10 +9,8 @@ export const redirectGuard: CanActivateFn = async () => {
   const user = await supabase.getUser();
 
   if (user) {
-    await router.navigate(['/health']);
-  } else {
-    await router.navigate(['/login']);
+    return router.createUrlTree(['/health']);
   }
 
-  return false;
+  return true;
 };

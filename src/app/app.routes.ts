@@ -9,8 +9,8 @@ import { logoutGuard } from './guards/logout.guard';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', canActivate: [redirectGuard], component: LoginComponent },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
+  { path: 'login', canActivate: [redirectGuard], component: LoginComponent },
+  { path: 'register', canActivate: [redirectGuard], component: RegisterComponent },
   { path: 'logout', canActivate: [logoutGuard], component: LoginComponent },
   { path: 'health', component: HealthComponent, canActivate: [authGuard] },
   { path: 'my-goals', component: MyGoalsComponent, canActivate: [authGuard] },
