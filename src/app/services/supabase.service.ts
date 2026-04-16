@@ -29,4 +29,31 @@ export class SupabaseService {
 
     if(profileError) throw profileError;
   }
+
+  async signIn(email: string, password: string, remember: boolean) {
+    const { data, error } = await this.supabase.auth.signInWithPassword({
+      email,
+      password
+    });
+    if (error) throw error;
+
+    if (!remember) {
+      await this.supabase.auth.updateUser({});
+      sessionStorage.setItem('supabase_no_persist', 'true');
+    } else {
+      sessionStorage.removeItem('supabase_no_persist');
+    }
+
+    return data;
+  }
+
+  async getUser() {
+    const { data } = await this.supabase.auth.getUser();
+    return data.user;
+  }
+
+  async signOut() {
+    const { error } = await this.supabase.auth.signOut();
+    if (error) throw error;
+  }
 }
