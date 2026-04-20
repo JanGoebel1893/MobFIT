@@ -56,4 +56,12 @@ export class SupabaseService {
     const { error } = await this.supabase.auth.signOut();
     if (error) throw error;
   }
+
+  async getProfile(userId: string) {
+    return await this.supabase
+      .from('profiles')
+      .select('username, age, height')
+      .eq('id', userId)
+      .single();
+  }
 }
