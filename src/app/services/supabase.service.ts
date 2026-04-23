@@ -9,7 +9,12 @@ export class SupabaseService {
   constructor() {
     this.supabase = createClient(
       environment.supabaseUrl,
-      environment.supabaseKey
+      environment.supabaseKey,
+      {
+        auth: {
+          lock: async (name, acquireTimeout, fn) => fn(),
+        }
+      }
     );
   }
 
@@ -63,5 +68,31 @@ export class SupabaseService {
       .select('username, age, height')
       .eq('id', userId)
       .single();
+  }
+
+  async getLatestHealthEntry(userId: string) {
+    return await this.supabase
+      .from('health_entries')
+      .select('*')
+      .eq('user_id', userId)
+      .order('date', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+  }
+
+  async upsertHealthEntry(userId: string, data: {
+    calories: number | null;
+    sleep_hours: number | null;
+    sleep_mins: number | null;
+    weight_kg: number | null;
+    water: number | null;
+  }) {
+    const today = new Date().toISOString().split('T')[0];
+    return await this.supabase
+      .from('health_entries')
+      .upsert(
+        { user_id: userId, date: today, ...data },
+        { onConflict: 'user_id,date' }
+      );
   }
 }
