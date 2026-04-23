@@ -4,17 +4,30 @@
   -webkit-font-smoothing: antialiased;
 }
 
+/* App mit Sidebar: füllt genau die Viewport-Höhe, kein Doppel-Scroll (Rechts-Scroll nur in den Seiten) */
+:host:has(> .layout) {
+  height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
 .layout {
   display: flex;
   align-items: stretch;
-  min-height: 100vh;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
   background: #f8fafc;
 }
 
 .main {
   flex: 1;
   min-width: 0;
-  min-height: 100vh;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .outlet-wrap {
@@ -22,5 +35,10 @@
   width: 100%;
   max-width: none;
   min-width: 0;
+  min-height: 0;
   padding: 24px 32px 32px;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }

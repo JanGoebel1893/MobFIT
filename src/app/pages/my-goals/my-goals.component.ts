@@ -9,6 +9,7 @@ import {
   GoalsMetricValues,
 } from '../../shared/goals-metric-modal/goals-metric-modal.component';
 import { WeeklyProgressCardComponent } from '../../shared/weekly-progress-card/weekly-progress-card.component';
+import { DashboardFooterComponent } from '../../shared/dashboard-footer/dashboard-footer.component';
 
 type GoalsModalKind = 'off' | 'setGoals' | 'addProgress';
 
@@ -20,9 +21,14 @@ type GoalsModalKind = 'off' | 'setGoals' | 'addProgress';
     HealthMetricCardComponent,
     GoalsMetricModalComponent,
     WeeklyProgressCardComponent,
+    DashboardFooterComponent,
   ],
   templateUrl: './my-goals.component.html',
-  styleUrls: ['./my-goals.component.css', '../../shared/styles/dashboard-shell.css'],
+  styleUrls: [
+    '../../shared/styles/legal-route-layout.css',
+    './my-goals.component.css',
+    '../../shared/styles/dashboard-shell.css',
+  ],
 })
 export class MyGoalsComponent {
   /** Welches Metrik-Popup offen ist (nur eines) */

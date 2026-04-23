@@ -9,13 +9,24 @@ import {
   HealthDataModalComponent,
 } from '../../shared/health-data-modal/health-data-modal.component';
 import { WeeklyProgressCardComponent } from '../../shared/weekly-progress-card/weekly-progress-card.component';
+import { DashboardFooterComponent } from '../../shared/dashboard-footer/dashboard-footer.component';
 
 @Component({
   selector: 'app-health',
   standalone: true,
-  imports: [GoalsTopNavComponent, HealthStatCardComponent, HealthDataModalComponent, WeeklyProgressCardComponent],
+  imports: [
+    GoalsTopNavComponent,
+    HealthStatCardComponent,
+    HealthDataModalComponent,
+    WeeklyProgressCardComponent,
+    DashboardFooterComponent,
+  ],
   templateUrl: './health.component.html',
-  styleUrls: ['./health.component.css', '../../shared/styles/dashboard-shell.css'],
+  styleUrls: [
+    '../../shared/styles/legal-route-layout.css',
+    './health.component.css',
+    '../../shared/styles/dashboard-shell.css',
+  ],
 })
 export class HealthComponent {
   showHealthDataModal = false;
