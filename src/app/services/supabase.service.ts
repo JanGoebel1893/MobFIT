@@ -95,4 +95,26 @@ export class SupabaseService {
         { onConflict: 'user_id,date' }
       );
   }
+
+  async getGoalTargets(userId: string) {
+    return await this.supabase
+      .from('goal_targets')
+      .select('*')
+      .eq('user_id', userId)
+      .maybeSingle();
+  }
+
+  async upsertGoalTargets(userId: string, data: {
+    steps: number | null;
+    jog_km: number | null;
+    bike_min: number | null;
+    activity_min: number | null;
+  }) {
+    return await this.supabase
+      .from('goal_targets')
+      .upsert(
+        { user_id: userId, ...data },
+        { onConflict: 'user_id' }
+      );
+  }
 }
