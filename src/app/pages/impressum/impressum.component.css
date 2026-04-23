@@ -1,0 +1,57 @@
+.legal-page {
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 0 16px;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.legal-page__title {
+  margin: 0 0 16px;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: #1a1c1f;
+}
+
+.legal-page__intro {
+  margin: 0 0 24px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #414755;
+}
+
+.legal-page__section {
+  margin-bottom: 22px;
+}
+
+.legal-page__h2 {
+  margin: 0 0 10px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.4;
+  color: #1a1c1f;
+}
+
+.legal-page__section p {
+  margin: 0 0 10px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #414755;
+}
+
+.legal-page__a {
+  color: #0058bc;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.legal-page__a:hover {
+  text-decoration: underline;
+}

@@ -1,43 +1,48 @@
-<div class="dashboard-shell">
+<div class="dashboard-shell dashboard-shell--legal">
   <app-goals-top-nav [pageTitle]="'My Goals Dashboard'" />
-  <div class="dashboard-shell__inner goals-page">
-    <section class="goals-hero" aria-labelledby="goals-hero-heading">
-      <div class="goals-hero__text">
-        <p class="goals-hero__eyebrow">Tagesübersicht</p>
-        <h2 id="goals-hero-heading" class="goals-hero__headline">Da is meine Oma ja besser!</h2>
-      </div>
-      <div class="goals-hero__actions">
-        <button type="button" class="goals-hero__btn goals-hero__btn--goals" (click)="openSetGoalsModal()">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path
-              d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4L16.5 3.5z"
-              stroke="#1a1c1f"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-          Goals
-        </button>
-        <button type="button" class="goals-hero__btn goals-hero__btn--add" (click)="openProgressModal()">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M12 5v14M5 12h14" stroke="#1e1e1e" stroke-width="3.5" stroke-linecap="round" />
-          </svg>
-          Hinzufügen
-        </button>
-      </div>
-    </section>
+  <div class="legal-route__scroll">
+    <div class="legal-route__content">
+      <div class="goals-page">
+        <section class="goals-hero" aria-labelledby="goals-hero-heading">
+          <div class="goals-hero__text">
+            <p class="goals-hero__eyebrow">Tagesübersicht</p>
+            <h2 id="goals-hero-heading" class="goals-hero__headline">Da is meine Oma ja besser!</h2>
+          </div>
+          <div class="goals-hero__actions">
+            <button type="button" class="goals-hero__btn goals-hero__btn--goals" (click)="openSetGoalsModal()">
+              <svg class="goals-hero__icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4L16.5 3.5z"
+                  stroke="#1a1c1f"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              Goals
+            </button>
+            <button type="button" class="goals-hero__btn goals-hero__btn--add" (click)="openProgressModal()">
+              <svg class="goals-hero__icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 5v14M5 12h14" stroke="#1e1e1e" stroke-width="3.5" stroke-linecap="round" />
+              </svg>
+              Hinzufügen
+            </button>
+          </div>
+        </section>
 
-    <div class="goals-bento" role="list">
-      @for (tile of tiles; track tile.label) {
-        <div class="goals-bento__cell" role="listitem">
-          <app-health-metric-card [tile]="tile" />
+        <div class="goals-bento" role="list">
+          @for (tile of tiles; track tile.label) {
+            <div class="goals-bento__cell" role="listitem">
+              <app-health-metric-card [tile]="tile" />
+            </div>
+          }
         </div>
-      }
-    </div>
 
-    <app-weekly-progress-card class="goals-weekly" />
+        <app-weekly-progress-card class="goals-weekly" />
+      </div>
+    </div>
   </div>
+  <app-dashboard-footer />
 
   <app-goals-metric-modal
     [open]="modal !== 'off'"
