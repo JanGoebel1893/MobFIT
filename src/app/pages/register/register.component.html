@@ -54,6 +54,31 @@
           </div>
 
           <div class="register-form__field">
+            <label class="register-form__label" for="reg-email">E-Mail</label>
+            <div class="register-form__input-wrap">
+              <input
+                id="reg-email"
+                name="email"
+                type="email"
+                class="register-form__input"
+                placeholder="name@example.com"
+                [(ngModel)]="email"
+                autocomplete="email"
+                required
+                aria-required="true"
+              />
+              <span class="register-form__input-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    fill="currentColor"
+                    d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"
+                  />
+                </svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="register-form__field">
             <label class="register-form__label" for="reg-password">Password</label>
             <div class="register-form__input-wrap">
               <input
@@ -65,7 +90,9 @@
                 [(ngModel)]="password"
                 autocomplete="new-password"
                 required
+                [minlength]="passwordMinLength"
                 aria-required="true"
+                [attr.aria-describedby]="'reg-password-hint'"
               />
               <span class="register-form__input-icon" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -76,6 +103,9 @@
                 </svg>
               </span>
             </div>
+            <p id="reg-password-hint" class="register-form__hint">
+              Mindestens {{ passwordMinLength }} Zeichen.
+            </p>
           </div>
 
           <div class="register-form__row-2">
@@ -129,7 +159,9 @@
             </span>
           </label>
 
-          <button type="submit" class="register-form__submit">Register</button>
+          <button type="submit" class="register-form__submit" [disabled]="!isRegisterFormValid">
+            Register
+          </button>
         </div>
 
         <p class="register-form__footer">
