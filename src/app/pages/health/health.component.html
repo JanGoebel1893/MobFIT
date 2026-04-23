@@ -1,6 +1,6 @@
 <div class="dashboard-shell">
   <app-goals-top-nav [pageTitle]="'Health Dashboard'" />
-  <div class="dashboard-shell__inner">
+  <div class="dashboard-shell__inner health-page">
     <section class="health" aria-labelledby="health-heading">
       <div class="health-hero">
         <div class="health-hero__text">
@@ -24,6 +24,8 @@
         }
       </div>
     </section>
+
+    <app-weekly-progress-card class="health-weekly" />
 
     <app-health-data-modal
       [open]="showHealthDataModal"

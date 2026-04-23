@@ -9,11 +9,12 @@ import {
   HealthDataModalComponent,
 } from '../../shared/health-data-modal/health-data-modal.component';
 import { SupabaseService } from '../../services/supabase.service';
+import { WeeklyProgressCardComponent } from '../../shared/weekly-progress-card/weekly-progress-card.component';
 
 @Component({
   selector: 'app-health',
   standalone: true,
-  imports: [GoalsTopNavComponent, HealthStatCardComponent, HealthDataModalComponent],
+  imports: [GoalsTopNavComponent, HealthStatCardComponent, HealthDataModalComponent, WeeklyProgressCardComponent],
   templateUrl: './health.component.html',
   styleUrls: ['./health.component.css', '../../shared/styles/dashboard-shell.css'],
 })
