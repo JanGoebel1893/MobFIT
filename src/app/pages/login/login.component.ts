@@ -39,18 +39,18 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   async onSubmit(event: Event): Promise<void> {
-  event.preventDefault();
-  this.errorMessage = '';
-  this.isLoading = true;
+    event.preventDefault();
+    this.errorMessage = '';
+    this.isLoading = true;
 
-  try {
-    await this.supabase.signIn(this.email, this.password, true);
-    this.router.navigate(['/health']);
-  } catch (error: any) {
-    this.errorMessage = 'Login fehlgeschlagen. Bitte Email und Passwort prüfen.';
-    console.error('Login error:', error);
-  } finally {
-    this.isLoading = false;
+    try {
+      await this.supabase.signIn(this.email, this.password, true);
+      this.router.navigate(['/health']);
+    } catch (error: any) {
+      this.errorMessage = 'Login fehlgeschlagen. Bitte Email und Passwort prüfen.';
+      console.error('Login error:', error);
+    } finally {
+      this.isLoading = false;
+    }
   }
-}
 }
