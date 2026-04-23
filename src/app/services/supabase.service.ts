@@ -9,7 +9,12 @@ export class SupabaseService {
   constructor() {
     this.supabase = createClient(
       environment.supabaseUrl,
-      environment.supabaseKey
+      environment.supabaseKey,
+      {
+        auth: {
+          lock: async (name, acquireTimeout, fn) => fn(),
+        }
+      }
     );
   }
 
@@ -28,5 +33,66 @@ export class SupabaseService {
     });
 
     if(profileError) throw profileError;
+  }
+
+  async signIn(email: string, password: string, remember: boolean) {
+    const { data, error } = await this.supabase.auth.signInWithPassword({
+      email,
+      password
+    });
+    if (error) throw error;
+
+    if (!remember) {
+      await this.supabase.auth.updateUser({});
+      sessionStorage.setItem('supabase_no_persist', 'true');
+    } else {
+      sessionStorage.removeItem('supabase_no_persist');
+    }
+
+    return data;
+  }
+
+  async getUser() {
+    const { data } = await this.supabase.auth.getUser();
+    return data.user;
+  }
+
+  async signOut() {
+    const { error } = await this.supabase.auth.signOut();
+    if (error) throw error;
+  }
+
+  async getProfile(userId: string) {
+    return await this.supabase
+      .from('profiles')
+      .select('username, age, height')
+      .eq('id', userId)
+      .single();
+  }
+
+  async getLatestHealthEntry(userId: string) {
+    return await this.supabase
+      .from('health_entries')
+      .select('*')
+      .eq('user_id', userId)
+      .order('date', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+  }
+
+  async upsertHealthEntry(userId: string, data: {
+    calories: number | null;
+    sleep_hours: number | null;
+    sleep_mins: number | null;
+    weight_kg: number | null;
+    water: number | null;
+  }) {
+    const today = new Date().toISOString().split('T')[0];
+    return await this.supabase
+      .from('health_entries')
+      .upsert(
+        { user_id: userId, date: today, ...data },
+        { onConflict: 'user_id,date' }
+      );
   }
 }
