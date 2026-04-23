@@ -23,6 +23,7 @@ export class GoalsMetricModalComponent {
 
   open = input(false);
   variant = input.required<GoalsMetricModalVariant>();
+  initialValues = input<GoalsMetricValues | null>(null);
 
   closed = output<void>();
   setGoalsSubmit = output<GoalsMetricValues>();
@@ -49,6 +50,11 @@ export class GoalsMetricModalComponent {
     effect(() => {
       const isOpen = this.open();
       if (isOpen) {
+        const values = this.initialValues();
+        if (values && this.variant() === 'setGoals') {
+          this.setGoalsModel = { ...values };
+        }
+
         this.prevHtmlOverflow = this.document.documentElement.style.overflow;
         this.prevBodyOverflow = this.document.body.style.overflow;
         this.document.documentElement.style.overflow = 'hidden';

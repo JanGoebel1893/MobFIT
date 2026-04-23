@@ -47,6 +47,7 @@
   <app-goals-metric-modal
     [open]="modal !== 'off'"
     [variant]="modal === 'addProgress' ? 'addProgress' : 'setGoals'"
+    [initialValues]="setGoalsValues()"
     (closed)="closeModal()"
     (setGoalsSubmit)="onSetGoalsSubmit($event)"
   />
