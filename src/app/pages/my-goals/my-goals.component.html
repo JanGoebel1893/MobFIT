@@ -1,6 +1,6 @@
 <div class="dashboard-shell">
   <app-goals-top-nav [pageTitle]="'My Goals Dashboard'" />
-  <div class="dashboard-shell__inner">
+  <div class="dashboard-shell__inner goals-page">
     <section class="goals-hero" aria-labelledby="goals-hero-heading">
       <div class="goals-hero__text">
         <p class="goals-hero__eyebrow">Tagesübersicht</p>
@@ -35,6 +35,8 @@
         </div>
       }
     </div>
+
+    <app-weekly-progress-card class="goals-weekly" />
   </div>
 
   <app-goals-metric-modal
