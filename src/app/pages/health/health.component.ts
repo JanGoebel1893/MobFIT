@@ -20,15 +20,15 @@ import { SupabaseService } from '../../services/supabase.service';
 export class HealthComponent implements OnInit {
   showHealthDataModal = false;
   isLoading = signal(true);
-  currentFormValues = signal<HealthDataFormValues>({    // NEU: signal statt getter
+  currentFormValues = signal<HealthDataFormValues>({
     caloriesKcal: '', sleepHours: '', sleepMinutes: '', weightKg: '', waterLiters: '',
   });
 
   stats: HealthStatCardConfig[] = [
-    { variant: 'calories', label: 'Kalorien',  primaryValue: '–', primaryUnit: 'kcal',   trendText: 'Noch kein Eintrag' },
-    { variant: 'sleep',    label: 'Schlaf',    primaryValue: '–',                         trendText: 'Noch kein Eintrag' },
-    { variant: 'weight',   label: 'Gewicht',   primaryValue: '–', primaryUnit: 'kg',      trendText: 'Noch kein Eintrag' },
-    { variant: 'water',    label: 'Wasser',    primaryValue: '–', primaryUnit: 'Liter',   trendText: 'Noch kein Eintrag' },
+    { variant: 'calories', label: 'Kalorien',  primaryValue: '-', primaryUnit: 'kcal',   trendText: 'Noch kein Eintrag' },
+    { variant: 'sleep',    label: 'Schlaf',    primaryValue: '-',                         trendText: 'Noch kein Eintrag' },
+    { variant: 'weight',   label: 'Gewicht',   primaryValue: '-', primaryUnit: 'kg',      trendText: 'Noch kein Eintrag' },
+    { variant: 'water',    label: 'Wasser',    primaryValue: '-', primaryUnit: 'Liter',   trendText: 'Noch kein Eintrag' },
   ];
 
   constructor(private supabase: SupabaseService) {}
@@ -40,7 +40,7 @@ export class HealthComponent implements OnInit {
     const { data } = await this.supabase.getLatestHealthEntry(user.id);
     if (data) {
       this.applyEntryToStats(data);
-      this.currentFormValues.set(this.buildFormValues(data)); // NEU
+      this.currentFormValues.set(this.buildFormValues(data));
     }
 
     this.isLoading.set(false);
@@ -51,7 +51,7 @@ export class HealthComponent implements OnInit {
 
   async onHealthDataSave(v: HealthDataFormValues): Promise<void> {
     this.updateStatsFromForm(v);
-    this.currentFormValues.set(v); // NEU: nach dem Speichern aktualisieren
+    this.currentFormValues.set(v);
     this.showHealthDataModal = false;
 
     const user = await this.supabase.getUser();
@@ -83,7 +83,7 @@ export class HealthComponent implements OnInit {
   }
 
   private updateStatsFromForm(v: HealthDataFormValues): void {
-    const calDigits  = v.caloriesKcal.replace(/[^\d]/g, '');  // ← \d statt \\d
+    const calDigits  = v.caloriesKcal.replace(/[^\d]/g, '');
     const calNum     = parseInt(calDigits, 10);
     const calDisplay = calDigits && !isNaN(calNum) ? calNum.toLocaleString('de-DE') : '-';
     const sleepDisplay = `${v.sleepHours.trim()}h ${v.sleepMinutes.trim()}m`;
@@ -95,8 +95,6 @@ export class HealthComponent implements OnInit {
       { ...this.stats[3], primaryValue: v.waterLiters.trim(), primaryUnit: 'Liter' },
     ];
   }
-
-
 
   private applyEntryToStats(data: any): void {
     const sleepDisplay = (data.sleep_hours != null && data.sleep_mins != null)
