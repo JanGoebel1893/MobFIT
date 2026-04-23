@@ -1,6 +1,27 @@
+/* Wie My Goals: Viewport-höhe, kein Seiten-Scroll auf normalen Bildschirmen */
+.health-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: min(calc(100dvh - 72px), calc(100vh - 72px));
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+@media (max-height: 720px) {
+  .health-page {
+    max-height: none;
+    overflow: visible;
+  }
+}
+
 .health {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   margin-inline: auto;
+  flex: 0 0 auto;
+  min-height: 0;
 }
 
 .health-hero {
@@ -11,8 +32,9 @@
   gap: 10px;
   width: 100%;
   min-height: 68px;
-  margin-bottom: 24px;
+  margin-bottom: clamp(12px, 2dvh, 24px);
   flex-wrap: wrap;
+  flex-shrink: 0;
 }
 
 .health-hero__text {
@@ -73,9 +95,16 @@
 .health__bento {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 24px;
+  gap: clamp(12px, 1.5dvh, 24px);
   width: 100%;
-  min-height: 232px;
+  min-height: 0;
+  flex: 0 0 auto;
+}
+
+.health-weekly {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: clamp(20px, 3dvh, 32px);
 }
 
 .health__cell {
