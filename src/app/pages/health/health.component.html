@@ -32,12 +32,10 @@
     </div>
   </div>
   <app-dashboard-footer />
-
-    <app-health-data-modal
-      [open]="showHealthDataModal"
-      [initialValues]="currentFormValues()"
-      (closed)="closeHealthDataModal()"
-      (save)="onHealthDataSave($event)"
-    />
-  </div>
+  <app-health-data-modal
+    [open]="showHealthDataModal"
+    [initialValues]="currentFormValues()"
+    (closed)="closeHealthDataModal()"
+    (save)="onHealthDataSave($event)"
+  />
 </div>
