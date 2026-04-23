@@ -1,0 +1,34 @@
+<article
+  class="wpc"
+  role="group"
+  aria-label="Wöchentlicher Fortschritt, Vergleich zu letzter Woche"
+>
+  <header class="wpc__header">
+    <h3 class="wpc__title">Wöchentlicher Fortschritt</h3>
+    <p class="wpc__subtitle">Vergleich zu letzter Woche</p>
+  </header>
+
+  <div class="wpc__chart" role="img" aria-hidden="true">
+    @for (day of days(); track day.shortLabel) {
+      <div class="wpc__day">
+        <div class="wpc__track">
+          @if (day.hasCurrent) {
+            <div
+              class="wpc__bar wpc__bar--current"
+              [style.height.%]="day.current * 100"
+            ></div>
+          }
+          <div
+            class="wpc__bar wpc__bar--prev"
+            [class.wpc__bar--ghost]="!day.hasCurrent"
+            [style.height.%]="day.previous * 100"
+          ></div>
+        </div>
+        <span
+          class="wpc__label"
+          [class.wpc__label--active]="day.isHighlightDay"
+        >{{ day.shortLabel }}</span>
+      </div>
+    }
+  </div>
+</article>

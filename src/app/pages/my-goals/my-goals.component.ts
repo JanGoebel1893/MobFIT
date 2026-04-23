@@ -8,13 +8,19 @@ import {
   GoalsMetricModalComponent,
   GoalsMetricValues,
 } from '../../shared/goals-metric-modal/goals-metric-modal.component';
+import { WeeklyProgressCardComponent } from '../../shared/weekly-progress-card/weekly-progress-card.component';
 
 type GoalsModalKind = 'off' | 'setGoals' | 'addProgress';
 
 @Component({
   selector: 'app-my-goals',
   standalone: true,
-  imports: [GoalsTopNavComponent, HealthMetricCardComponent, GoalsMetricModalComponent],
+  imports: [
+    GoalsTopNavComponent,
+    HealthMetricCardComponent,
+    GoalsMetricModalComponent,
+    WeeklyProgressCardComponent,
+  ],
   templateUrl: './my-goals.component.html',
   styleUrls: ['./my-goals.component.css', '../../shared/styles/dashboard-shell.css'],
 })
