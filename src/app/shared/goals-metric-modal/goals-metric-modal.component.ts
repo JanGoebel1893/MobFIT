@@ -13,6 +13,11 @@ export interface GoalsMetricValues {
   activityMin: string;
 }
 
+export interface ProgressEntry {
+  metric: keyof GoalsMetricValues;
+  value: string;
+}
+
 @Component({
   selector: 'app-goals-metric-modal',
   standalone: true,
@@ -29,20 +34,20 @@ export class GoalsMetricModalComponent {
 
   closed = output<void>();
   setGoalsSubmit = output<GoalsMetricValues>();
-  progressAdd = output<{ metric: keyof GoalsMetricValues }>();
+  progressAdd = output<ProgressEntry>(); // ← ein Feld + Wert
 
   setGoalsModel: GoalsMetricValues = {
-    steps: '25',
-    jogKm: '45',
-    bikeMin: '25',
-    activityMin: '45',
+    steps: '',
+    jogKm: '',
+    bikeMin: '',
+    activityMin: '',
   };
 
   progressModel: GoalsMetricValues = {
-    steps: '25',
-    jogKm: '45',
-    bikeMin: '25',
-    activityMin: '45',
+    steps: '0',
+    jogKm: '0',
+    bikeMin: '0',
+    activityMin: '0',
   };
 
   readonly icons = {
@@ -61,11 +66,13 @@ export class GoalsMetricModalComponent {
     effect(() => {
       const isOpen = this.open();
       if (isOpen) {
-        const values = this.initialValues();
-        if (values && this.variant() === 'setGoals') {
-          this.setGoalsModel = { ...values };
+        if (this.variant() === 'setGoals') {
+          const values = this.initialValues();
+          if (values) this.setGoalsModel = { ...values };
         }
-
+        if (this.variant() === 'addProgress') {
+          this.progressModel = { steps: '0', jogKm: '0', bikeMin: '0', activityMin: '0' };
+        }
         this.prevHtmlOverflow = this.document.documentElement.style.overflow;
         this.prevBodyOverflow = this.document.body.style.overflow;
         this.document.documentElement.style.overflow = 'hidden';
@@ -79,25 +86,23 @@ export class GoalsMetricModalComponent {
 
   @HostListener('document:keydown.escape')
   onEscape(): void {
-    if (this.open()) {
-      this.close();
-    }
+    if (this.open()) this.close();
   }
 
-  close(): void {
-    this.closed.emit();
-  }
-
-  onBackdropClick(): void {
-    this.close();
-  }
+  close(): void { this.closed.emit(); }
+  onBackdropClick(): void { this.close(); }
 
   onSubmitSetGoals(): void {
     this.setGoalsSubmit.emit({ ...this.setGoalsModel });
     this.close();
   }
 
+  // Plus-Button: emittet nur das eine Feld + Wert, leert das Feld danach
   onAddProgress(metric: keyof GoalsMetricValues): void {
-    this.progressAdd.emit({ metric });
+    const value = this.progressModel[metric];
+    if (!value || value.trim() === '' || value === '0') return;
+
+    this.progressAdd.emit({ metric, value });
+    this.progressModel[metric] = '0'; // Feld nach dem Speichern leeren
   }
 }
