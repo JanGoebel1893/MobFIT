@@ -1,17 +1,20 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { SupabaseService } from '../../services/supabase.service';
+import { LucideAngularModule } from 'lucide-angular';
+import { HeartIcon, TargetIcon } from 'lucide-angular/src/icons';
 
 @Component({
   selector: 'app-side-nav-bar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, LucideAngularModule],
   templateUrl: './side-nav-bar.component.html',
   styleUrl: './side-nav-bar.component.css',
 })
 export class SideNavBarComponent implements OnInit {
   userName = signal('');
   userSubtitle = signal('');
+  readonly icons = { Target: TargetIcon, Heart: HeartIcon };
 
   constructor(private supabase: SupabaseService) {}
 

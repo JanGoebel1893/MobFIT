@@ -2,11 +2,13 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { SupabaseService } from '../../services/supabase.service';
+import { LucideAngularModule } from 'lucide-angular';
+import { LockIcon, MailIcon, UserIcon } from 'lucide-angular/src/icons';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, LucideAngularModule],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
 })
@@ -21,6 +23,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   /** Mindestlänge Passwort (Anzeige + Validierung) */
   readonly passwordMinLength = 8;
+  readonly icons = { User: UserIcon, Mail: MailIcon, Lock: LockIcon };
 
   get isRegisterFormValid(): boolean {
     const user = this.username.trim();
