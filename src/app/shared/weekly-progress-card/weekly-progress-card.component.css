@@ -24,7 +24,27 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  gap: 4px;
   flex-shrink: 0;
+}
+
+.wpc__header.wpc__header--with-filters {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: start;
+  gap: 12px;
+}
+
+.wpc__header-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  min-width: 0;
+}
+
+.wpc__header-spacer {
+  min-width: 0;
 }
 
 .wpc__title {
@@ -43,6 +63,53 @@
   font-size: 14px;
   line-height: 20px;
   color: #717786;
+}
+
+.wpc__filters {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  gap: 10px;
+}
+
+.wpc__filter {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 10px;
+  background: #e8e8ed;
+  color: #717786;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.05s ease;
+}
+
+.wpc__filter:hover {
+  background: #dedee6;
+}
+
+.wpc__filter:active {
+  transform: translateY(0.5px);
+}
+
+.wpc__filter--active {
+  background: #ffffff;
+  color: #414755;
+}
+
+.wpc__filter-icon {
+  display: block;
+}
+
+.wpc__filter:focus-visible {
+  outline: 3px solid rgba(0, 88, 188, 0.35);
+  outline-offset: 2px;
 }
 
 .wpc__chart {
@@ -108,4 +175,14 @@
 
 .wpc__label--active {
   color: #0058bc;
+}
+
+@media (max-width: 560px) {
+  .wpc__header.wpc__header--with-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .wpc__filters {
+    justify-content: flex-start;
+  }
 }
