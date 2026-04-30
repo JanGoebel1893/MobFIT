@@ -12,6 +12,8 @@ import { SupabaseService } from '../../services/supabase.service';
 import { WeeklyProgressCardComponent } from '../../shared/weekly-progress-card/weekly-progress-card.component';
 import { DashboardFooterComponent } from '../../shared/dashboard-footer/dashboard-footer.component';
 
+type HealthStatsRange = 'week' | 'month';
+
 @Component({
   selector: 'app-health',
   standalone: true,
@@ -32,6 +34,7 @@ import { DashboardFooterComponent } from '../../shared/dashboard-footer/dashboar
 export class HealthComponent implements OnInit {
   showHealthDataModal = false;
   isLoading = signal(true);
+  statsRange = signal<HealthStatsRange>('week');
   currentFormValues = signal<HealthDataFormValues>({
     caloriesKcal: '', sleepHours: '', sleepMinutes: '', weightKg: '', waterLiters: '',
   });
@@ -60,6 +63,10 @@ export class HealthComponent implements OnInit {
 
   openHealthDataModal(): void  { this.showHealthDataModal = true; }
   closeHealthDataModal(): void { this.showHealthDataModal = false; }
+
+  setStatsRange(range: HealthStatsRange): void {
+    this.statsRange.set(range);
+  }
 
   async onHealthDataSave(v: HealthDataFormValues): Promise<void> {
     this.updateStatsFromForm(v);
