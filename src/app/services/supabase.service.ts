@@ -117,4 +117,27 @@ export class SupabaseService {
         { onConflict: 'user_id' }
       );
   }
+
+  /** Heutigen Tages-Gesamtwert laden (Summe aller Einträge) */
+  async getTodayActivitySums(userId: string) {
+    const today = new Date().toISOString().split('T')[0];
+    return await this.supabase
+      .from('activity_logs')
+      .select('steps, jog_km, bike_min, activity_min')
+      .eq('user_id', userId)
+      .eq('date', today);
+  }
+
+  /** Neuen Aktivitäts-Eintrag hinzufügen */
+  async addActivityLog(userId: string, data: {
+    steps?: number | null;
+    jog_km?: number | null;
+    bike_min?: number | null;
+    activity_min?: number | null;
+  }) {
+    const today = new Date().toISOString().split('T')[0];
+    return await this.supabase
+      .from('activity_logs')
+      .insert({ user_id: userId, date: today, ...data });
+  }
 }
