@@ -38,7 +38,13 @@
           }
         </div>
 
-        <app-weekly-progress-card class="goals-weekly" [showFilters]="true" />
+        <app-weekly-progress-card
+          class="goals-weekly"
+          [showFilters]="true"
+          [showRangeToggle]="true"
+          [range]="statsRange()"
+          (rangeChange)="setStatsRange($event)"
+        />
       </div>
     </div>
   </div>
