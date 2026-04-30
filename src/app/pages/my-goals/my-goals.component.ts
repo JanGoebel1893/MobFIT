@@ -7,6 +7,7 @@ import {
 import {
   GoalsMetricModalComponent,
   GoalsMetricValues,
+  ProgressEntry,
 } from '../../shared/goals-metric-modal/goals-metric-modal.component';
 import { WeeklyProgressCardComponent } from '../../shared/weekly-progress-card/weekly-progress-card.component';
 import { DashboardFooterComponent } from '../../shared/dashboard-footer/dashboard-footer.component';
@@ -44,130 +45,135 @@ export class MyGoalsComponent implements OnInit {
     activityMin: '30',
   });
 
+  private todaySums = { steps: 0, jogKm: 0, bikeMin: 0, activityMin: 0 };
+
   tiles: HealthMetricTileConfig[] = [
-    {
-      label: 'Schritte',
-      currentValue: '4000',
-      goalText: '/ ',
-      progressPercent: 40,
-      accent: 'blue',
-      icon: 'steps',
-    },
-    {
-      label: 'Joggen',
-      currentValue: '2',
-      currentSuffix: ' km',
-      goalText: '/ ',
-      progressPercent: 6,
-      accent: 'blue',
-      icon: 'run',
-    },
-    {
-      label: 'Radfahren',
-      currentValue: '20',
-      currentSuffix: ' min',
-      goalText: '/ ',
-      progressPercent: 80,
-      accent: 'red',
-      icon: 'bike',
-    },
-    {
-      label: 'Aktivitätsminuten',
-      currentValue: '32',
-      goalText: '/ ',
-      progressPercent: 53,
-      accent: 'green',
-      icon: 'bolt',
-      goalReached: true,
-    },
+    { label: 'Schritte',          currentValue: '0', goalText: '/ –',      progressPercent: 0, accent: 'blue',  icon: 'steps' },
+    { label: 'Joggen',            currentValue: '0', currentSuffix: ' km',  goalText: '/ –',   progressPercent: 0, accent: 'blue',  icon: 'run'  },
+    { label: 'Radfahren',         currentValue: '0', currentSuffix: ' min', goalText: '/ –',   progressPercent: 0, accent: 'red',   icon: 'bike' },
+    { label: 'Aktivitätsminuten', currentValue: '0', currentSuffix: ' min', goalText: '/ –',   progressPercent: 0, accent: 'green', icon: 'bolt' },
   ];
 
   constructor(private supabase: SupabaseService) {}
 
   async ngOnInit(): Promise<void> {
     const user = await this.supabase.getUser();
-    if (!user) return;
+    if (!user) { this.isLoading.set(false); return; }
 
-    const { data, error } = await this.supabase.getGoalTargets(user.id);
-    if (error || !data) return;
+    const [goalsRes, logsRes] = await Promise.all([
+      this.supabase.getGoalTargets(user.id),
+      this.supabase.getTodayActivitySums(user.id),
+    ]);
 
-    const values: GoalsMetricValues = {
-      steps: data.steps != null ? String(data.steps) : '',
-      jogKm: data.jog_km != null ? String(data.jog_km) : '',
-      bikeMin: data.bike_min != null ? String(data.bike_min) : '',
-      activityMin: data.activity_min != null ? String(data.activity_min) : '',
-    };
+    if (goalsRes.data) {
+      const g = goalsRes.data;
+      this.setGoalsValues.set({
+        steps:       g.steps        != null ? String(g.steps)        : '',
+        jogKm:       g.jog_km       != null ? String(g.jog_km)       : '',
+        bikeMin:     g.bike_min     != null ? String(g.bike_min)     : '',
+        activityMin: g.activity_min != null ? String(g.activity_min) : '',
+      });
+    }
 
-    this.setGoalsValues.set(values);
-    this.applyGoalsToTiles(values);
+    if (logsRes.data && logsRes.data.length > 0) {
+      this.todaySums = logsRes.data.reduce(
+        (acc, row) => ({
+          steps:       acc.steps       + (row.steps         ?? 0),
+          jogKm:       acc.jogKm       + Number(row.jog_km  ?? 0),
+          bikeMin:     acc.bikeMin     + (row.bike_min      ?? 0),
+          activityMin: acc.activityMin + (row.activity_min  ?? 0),
+        }),
+        { steps: 0, jogKm: 0, bikeMin: 0, activityMin: 0 }
+      );
+    }
+
+    this.rebuildTiles();
+    this.isLoading.set(false);
   }
 
-  openSetGoalsModal(): void {
-    this.modal = 'setGoals';
-  }
-
-  openProgressModal(): void {
-    this.modal = 'addProgress';
-  }
-
-  closeModal(): void {
-    this.modal = 'off';
-  }
-
-  setStatsRange(range: GoalsStatsRange): void {
-    this.statsRange.set(range);
-  }
+  openSetGoalsModal(): void { this.modal = 'setGoals'; }
+  openProgressModal(): void { this.modal = 'addProgress'; }
+  closeModal(): void        { this.modal = 'off'; }
+  setStatsRange(r: GoalsStatsRange): void { this.statsRange.set(r); }
 
   async onSetGoalsSubmit(values: GoalsMetricValues): Promise<void> {
     this.setGoalsValues.set(values);
-    this.applyGoalsToTiles(values);
+    this.rebuildTiles();
     this.closeModal();
 
     const user = await this.supabase.getUser();
     if (!user) return;
-
-    const result = await this.supabase.upsertGoalTargets(user.id, {
-      steps: this.toInt(values.steps),
-      jog_km: this.toFloat(values.jogKm),
-      bike_min: this.toInt(values.bikeMin),
+    await this.supabase.upsertGoalTargets(user.id, {
+      steps:        this.toInt(values.steps),
+      jog_km:       this.toFloat(values.jogKm),
+      bike_min:     this.toInt(values.bikeMin),
       activity_min: this.toInt(values.activityMin),
     });
-
-    console.log('Goal upsert result:', result);
   }
 
-  private applyGoalsToTiles(values: GoalsMetricValues): void {
-    const stepsGoal = this.toInt(values.steps);
-    const jogGoal = this.toFloat(values.jogKm);
-    const bikeGoal = this.toInt(values.bikeMin);
-    const activityGoal = this.toInt(values.activityMin);
+  async onProgressAdd(entry: ProgressEntry): Promise<void> {
+    const user = await this.supabase.getUser();
+    if (!user) return;
 
-    const currentSteps = this.toInt(this.tiles[0].currentValue.replace(/\./g, ''));
-    const currentJog = this.toFloat(this.tiles[1].currentValue);
-    const currentBike = this.toInt(this.tiles[2].currentValue);
-    const currentActivity = this.toInt(this.tiles[3].currentValue);
+    const payload = {
+      steps:        entry.metric === 'steps'       ? this.toIntOrNull(entry.value)   : null,
+      jog_km:       entry.metric === 'jogKm'       ? this.toFloatOrNull(entry.value) : null,
+      bike_min:     entry.metric === 'bikeMin'     ? this.toIntOrNull(entry.value)   : null,
+      activity_min: entry.metric === 'activityMin' ? this.toIntOrNull(entry.value)   : null,
+    };
+
+    await this.supabase.addActivityLog(user.id, payload);
+
+    // Lokale Summe sofort aktualisieren
+    switch (entry.metric) {
+      case 'steps':       this.todaySums.steps       += this.toInt(entry.value);   break;
+      case 'jogKm':       this.todaySums.jogKm        += this.toFloat(entry.value); break;
+      case 'bikeMin':     this.todaySums.bikeMin      += this.toInt(entry.value);   break;
+      case 'activityMin': this.todaySums.activityMin  += this.toInt(entry.value);   break;
+    }
+
+    this.rebuildTiles();
+  }
+
+  // ─── private ────────────────────────────────────────────────────
+
+  private rebuildTiles(): void {
+    const goals = this.setGoalsValues();
+    const stepsGoal    = this.toInt(goals.steps);
+    const jogGoal      = this.toFloat(goals.jogKm);
+    const bikeGoal     = this.toInt(goals.bikeMin);
+    const activityGoal = this.toInt(goals.activityMin);
+
+    const { steps, jogKm, bikeMin, activityMin } = this.todaySums;
 
     this.tiles = [
       {
         ...this.tiles[0],
-        goalText: `/ ${stepsGoal.toLocaleString('de-DE')}`,
-        progressPercent: this.calcPercent(currentSteps, stepsGoal),
+        currentValue:    steps.toLocaleString('de-DE'),
+        goalText:        stepsGoal    ? `/ ${stepsGoal.toLocaleString('de-DE')}` : '/ –',
+        progressPercent: this.calcPercent(steps, stepsGoal),
+        goalReached:     stepsGoal > 0 && steps >= stepsGoal,
       },
       {
         ...this.tiles[1],
-        goalText: `/ ${this.formatNumber(jogGoal)} km`,
-        progressPercent: this.calcPercent(currentJog, jogGoal),
+        currentValue:    this.formatNumber(jogKm),
+        goalText:        jogGoal      ? `/ ${this.formatNumber(jogGoal)} km` : '/ –',
+        progressPercent: this.calcPercent(jogKm, jogGoal),
+        goalReached:     jogGoal > 0 && jogKm >= jogGoal,
       },
       {
         ...this.tiles[2],
-        goalText: `/ ${bikeGoal} min`,
-        progressPercent: this.calcPercent(currentBike, bikeGoal),
+        currentValue:    String(bikeMin),
+        goalText:        bikeGoal     ? `/ ${bikeGoal} min` : '/ –',
+        progressPercent: this.calcPercent(bikeMin, bikeGoal),
+        goalReached:     bikeGoal > 0 && bikeMin >= bikeGoal,
       },
       {
         ...this.tiles[3],
-        goalText: `/ ${activityGoal}`,
-        progressPercent: this.calcPercent(currentActivity, activityGoal),
-        goalReached: currentActivity >= activityGoal,
+        currentValue:    String(activityMin),
+        goalText:        activityGoal ? `/ ${activityGoal} min` : '/ –',
+        progressPercent: this.calcPercent(activityMin, activityGoal),
+        goalReached:     activityGoal > 0 && activityMin >= activityGoal,
       },
     ];
   }
@@ -182,9 +188,19 @@ export class MyGoalsComponent implements OnInit {
     return Number.isNaN(n) ? 0 : n;
   }
 
+  private toIntOrNull(value: string): number | null {
+    const n = parseInt(value.replace(/[^\d]/g, ''), 10);
+    return Number.isNaN(n) || n === 0 ? null : n;
+  }
+
   private toFloat(value: string): number {
     const n = parseFloat(value.replace(',', '.'));
     return Number.isNaN(n) ? 0 : n;
+  }
+
+  private toFloatOrNull(value: string): number | null {
+    const n = parseFloat(value.replace(',', '.'));
+    return Number.isNaN(n) || n === 0 ? null : n;
   }
 
   private formatNumber(value: number): string {
