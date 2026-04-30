@@ -1,0 +1,33 @@
+/* Datenschutz, Impressum, Health, My Goals: nur der Bereich unter der Top-Nav scrollt, Header+Footer fix im Viewport */
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+}
+
+.dashboard-shell--legal {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  width: 100%;
+}
+
+.legal-route__scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.legal-route__content {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1120px;
+  margin-inline: auto;
+  padding: 24px clamp(16px, 4vw, 32px) 32px;
+}

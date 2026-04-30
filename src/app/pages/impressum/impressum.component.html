@@ -1,0 +1,51 @@
+<div class="dashboard-shell dashboard-shell--legal">
+  <app-goals-top-nav [pageTitle]="'Impressum'" />
+  <div class="legal-route__scroll">
+    <div class="legal-route__content">
+      <article class="legal-page" aria-labelledby="legal-imp-heading">
+        <h1 id="legal-imp-heading" class="legal-page__title">Impressum</h1>
+        <p class="legal-page__intro">
+          Angaben gemäß § 5 Telemediengesetz (TMG) bzw. § 18 MStV. Bitte ersetzen Sie die Platzhalter
+          durch Ihre echten Unternehmens- und Kontaktdaten, bevor MobFIT produktiv eingesetzt wird.
+        </p>
+
+        <section class="legal-page__section">
+          <h2 class="legal-page__h2">Diensteanbieter</h2>
+          <p>
+            <strong>[Firmenname / Projektname]</strong><br />
+            [Straße und Hausnummer]<br />
+            [PLZ Ort]<br />
+            Deutschland
+          </p>
+        </section>
+
+        <section class="legal-page__section">
+          <h2 class="legal-page__h2">Kontakt</h2>
+          <p>
+            Telefon: [Telefonnummer]<br />
+            E-Mail: [E-Mail-Adresse]
+          </p>
+        </section>
+
+        <section class="legal-page__section">
+          <h2 class="legal-page__h2">Vertretungsberechtigt</h2>
+          <p>[Name der vertretungsberechtigten Person, bei Kapitalgesellschaft: Geschäftsführung / Vorstand]</p>
+        </section>
+
+        <section class="legal-page__section">
+          <h2 class="legal-page__h2">Hinweis</h2>
+          <p>
+            MobFIT ist eine Software zur Unterstützung persönlicher Fitness- und Gesundheitsziele. Sie
+            ersetzt keine medizinische Diagnose oder Behandlung. Weitere rechtliche Angaben
+            (USt-ID, Registergericht, …) bitte an Ihre Situation anpassen.
+          </p>
+          <p>
+            Datenschutzhinweise:
+            <a routerLink="/datenschutz" class="legal-page__a">Datenschutzerklärung</a>
+          </p>
+        </section>
+      </article>
+    </div>
+  </div>
+  <app-dashboard-footer />
+</div>

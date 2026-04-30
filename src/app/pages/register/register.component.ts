@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { SupabaseService } from '../../services/supabase.service';
 
 @Component({
@@ -17,6 +17,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   age: number | null = null;
   heightCm: number | null = null;
   agreeTerms = false;
+  isLoading = false;
 
   /** Mindestlänge Passwort (Anzeige + Validierung) */
   readonly passwordMinLength = 8;
@@ -50,7 +51,10 @@ export class RegisterComponent implements OnInit, OnDestroy {
   private prevHtmlOverflow = '';
   private prevBodyOverflow = '';
 
-  constructor(private supabase: SupabaseService) {}
+  constructor(
+    private supabase: SupabaseService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.prevHtmlOverflow = document.documentElement.style.overflow;
@@ -80,13 +84,18 @@ export class RegisterComponent implements OnInit, OnDestroy {
   }
 
   async onRegister() {
+    this.isLoading = true;
+
     try {
       await this.supabase.signUp(
         this.email, this.password,
         this.username, this.age!, this.heightCm!
       );
+      this.router.navigate(['/health']);
     } catch(error) {
       console.error("Error:", error);
+    } finally {
+      this.isLoading = false;
     }
   }
 }

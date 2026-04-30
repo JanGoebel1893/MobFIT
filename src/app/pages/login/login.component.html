@@ -27,15 +27,17 @@
 
         <div class="login-form__fields">
           <div class="login-form__field">
-            <label class="login-form__label" for="login-username">Username</label>
+            <label class="login-form__label" for="login-username">Email</label>
             <input
-              id="login-username"
-              name="username"
-              type="text"
+              id="login-email"
+              name="email"
+              type="email"
               class="login-form__input"
-              placeholder="e.g. alex_kinetic"
-              [(ngModel)]="username"
-              autocomplete="username"
+              placeholder="name@example.com"
+              [(ngModel)]="email"
+              autocomplete="email"
+              required
+              aria-required="true"
             />
           </div>
 
@@ -49,6 +51,8 @@
               placeholder="••••••••"
               [(ngModel)]="password"
               autocomplete="current-password"
+              required
+              aria-required="true"
             />
           </div>
 

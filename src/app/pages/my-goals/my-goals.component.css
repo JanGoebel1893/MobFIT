@@ -1,18 +1,24 @@
-/* Karten + Chart in der Viewport-Höhe; bei extrem kurzer Höhe ggf. nur Chart schrumpfen */
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+}
+
+/* Inhalt scrollt in .legal-route__scroll; gleiches Muster wie Datenschutz/Impressum */
 .goals-page {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  max-height: min(calc(100dvh - 72px), calc(100vh - 72px));
-  overflow: hidden;
+  width: 100%;
   box-sizing: border-box;
+  flex: 0 0 auto;
 }
 
-@media (max-height: 720px) {
-  .goals-page {
-    max-height: none;
-    overflow: visible;
-  }
+.goals-hero__icon {
+  display: block;
+  fill: none;
 }
 
 .goals-hero {

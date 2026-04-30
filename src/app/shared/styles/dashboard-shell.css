@@ -6,8 +6,11 @@
   width: calc(100% + 64px);
   max-width: none;
   min-width: 0;
+  min-height: 0;
+  flex: 1 1 auto;
   box-sizing: border-box;
-  margin: -24px -32px 0;
+  /* Bündig mit Inhaltsspalte: gleicht .outlet-wrap (24/32/32) aus, auch unten, damit der Footer nicht „schwebt“ */
+  margin: -24px -32px -32px;
 }
 
 .dashboard-shell__inner {
@@ -16,4 +19,12 @@
   max-width: 1120px;
   margin-inline: auto;
   padding: 24px clamp(16px, 4vw, 32px) 32px;
+}
+
+/* Inhalt + Footer: Footer unten (kombinieren mit .dashboard-shell__inner) */
+.shell-with-footer {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
 }

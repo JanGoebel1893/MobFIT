@@ -13,7 +13,6 @@ import { SideNavBarComponent } from './shared/side-nav-bar/side-nav-bar.componen
 export class AppComponent {
   private readonly router = inject(Router);
 
-  /** URL für Shell: Sidebar ausblenden auf /login und /register */
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
       filter((e): e is NavigationEnd => e instanceof NavigationEnd),
@@ -25,7 +24,10 @@ export class AppComponent {
 
   readonly showAppShell = computed(() => {
     const path = (this.currentUrl() ?? '').split('?')[0];
-    return path !== '/login' && path !== '/register';
+    return path !== '/login'
+      && path !== '/register'
+      && path !== '/logout'
+      && path !== '/';
   });
 
   title = 'mobfit';

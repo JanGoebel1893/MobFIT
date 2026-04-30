@@ -21,16 +21,17 @@ export class HealthDataModalComponent {
   private readonly document = inject(DOCUMENT);
 
   open = input(false);
+  initialValues = input<HealthDataFormValues | null>(null); // NEU
 
   closed = output<void>();
   save = output<HealthDataFormValues>();
 
   form: HealthDataFormValues = {
-    caloriesKcal: '2450',
-    sleepHours: '7',
-    sleepMinutes: '30',
-    weightKg: '78.5',
-    waterLiters: '1',
+    caloriesKcal: '',
+    sleepHours: '',
+    sleepMinutes: '',
+    weightKg: '',
+    waterLiters: '',
   };
 
   private prevHtmlOverflow = '';
@@ -40,6 +41,12 @@ export class HealthDataModalComponent {
     effect(() => {
       const isOpen = this.open();
       if (isOpen) {
+        // Nur beim Öffnen die Werte setzen
+        const values = this.initialValues();
+        this.form = values
+          ? { ...values }
+          : { caloriesKcal: '', sleepHours: '', sleepMinutes: '', weightKg: '', waterLiters: '' };
+
         this.prevHtmlOverflow = this.document.documentElement.style.overflow;
         this.prevBodyOverflow = this.document.body.style.overflow;
         this.document.documentElement.style.overflow = 'hidden';
@@ -53,21 +60,11 @@ export class HealthDataModalComponent {
 
   @HostListener('document:keydown.escape')
   onEscape(): void {
-    if (this.open()) {
-      this.close();
-    }
+    if (this.open()) this.close();
   }
 
-  close(): void {
-    this.closed.emit();
-  }
+  close(): void  { this.closed.emit(); }
+  onBackdropClick(): void { this.close(); }
+  onSave(): void { this.save.emit({ ...this.form }); this.close(); }
 
-  onBackdropClick(): void {
-    this.close();
-  }
-
-  onSave(): void {
-    this.save.emit({ ...this.form });
-    this.close();
-  }
 }

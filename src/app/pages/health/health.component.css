@@ -1,18 +1,19 @@
-/* Wie My Goals: Viewport-höhe, kein Seiten-Scroll auf normalen Bildschirmen */
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+}
+
+/* Inhalt scrollt in .legal-route__scroll; gleiches Muster wie Datenschutz/Impressum */
 .health-page {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  max-height: min(calc(100dvh - 72px), calc(100vh - 72px));
-  overflow: hidden;
+  width: 100%;
   box-sizing: border-box;
-}
-
-@media (max-height: 720px) {
-  .health-page {
-    max-height: none;
-    overflow: visible;
-  }
+  flex: 0 0 auto;
 }
 
 .health {
@@ -22,6 +23,11 @@
   margin-inline: auto;
   flex: 0 0 auto;
   min-height: 0;
+}
+
+.health-hero__icon {
+  display: block;
+  fill: none;
 }
 
 .health-hero {
