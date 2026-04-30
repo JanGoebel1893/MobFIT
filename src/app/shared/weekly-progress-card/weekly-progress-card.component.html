@@ -3,7 +3,10 @@
   role="group"
   aria-label="Wöchentlicher Fortschritt, Vergleich zu letzter Woche"
 >
-  <header class="wpc__header" [class.wpc__header--with-filters]="showFilters()">
+  <header
+    class="wpc__header"
+    [class.wpc__header--with-controls]="showFilters() || showRangeToggle()"
+  >
     <div class="wpc__header-text">
       <h3 class="wpc__title">Wöchentlicher Fortschritt</h3>
       <p class="wpc__subtitle">Vergleich zu letzter Woche</p>
@@ -94,8 +97,31 @@
           </svg>
         </button>
       </nav>
+    }
 
-      <div class="wpc__header-spacer" aria-hidden="true"></div>
+    @if (showRangeToggle()) {
+      <div class="wpc__range-wrap">
+        <div class="wpc__range" role="group" aria-label="Zeitraum der Statistik">
+        <button
+          type="button"
+          class="wpc__range-btn"
+          [class.wpc__range-btn--active]="range() === 'week'"
+          [attr.aria-pressed]="range() === 'week'"
+          (click)="setRange('week')"
+        >
+          Diese Woche
+        </button>
+        <button
+          type="button"
+          class="wpc__range-btn"
+          [class.wpc__range-btn--active]="range() === 'month'"
+          [attr.aria-pressed]="range() === 'month'"
+          (click)="setRange('month')"
+        >
+          Diesen Monat
+        </button>
+        </div>
+      </div>
     }
   </header>
 

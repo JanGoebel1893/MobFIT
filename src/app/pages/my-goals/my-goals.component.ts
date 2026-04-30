@@ -13,6 +13,7 @@ import { DashboardFooterComponent } from '../../shared/dashboard-footer/dashboar
 import { SupabaseService } from '../../services/supabase.service';
 
 type GoalsModalKind = 'off' | 'setGoals' | 'addProgress';
+type GoalsStatsRange = 'week' | 'month';
 
 @Component({
   selector: 'app-my-goals',
@@ -34,6 +35,7 @@ type GoalsModalKind = 'off' | 'setGoals' | 'addProgress';
 export class MyGoalsComponent implements OnInit {
   modal: GoalsModalKind = 'off';
   isLoading = signal(true);
+  statsRange = signal<GoalsStatsRange>('week');
 
   setGoalsValues = signal<GoalsMetricValues>({
     steps: '10000',
@@ -110,6 +112,10 @@ export class MyGoalsComponent implements OnInit {
 
   closeModal(): void {
     this.modal = 'off';
+  }
+
+  setStatsRange(range: GoalsStatsRange): void {
+    this.statsRange.set(range);
   }
 
   async onSetGoalsSubmit(values: GoalsMetricValues): Promise<void> {

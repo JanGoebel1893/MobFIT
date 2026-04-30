@@ -1,4 +1,4 @@
-import { Component, computed, input, signal } from '@angular/core';
+import { Component, computed, input, output, signal } from '@angular/core';
 
 /** Ein Tag in der Wochen-Chart (0–1 = Anteil der Balkenhöhe) */
 export interface WeeklyDayData {
@@ -23,6 +23,7 @@ export const defaultWeeklyProgressDemo: readonly WeeklyDayData[] = [
 ];
 
 export type WeeklyMetricFilter = 'steps' | 'run' | 'bike' | 'bolt';
+export type WeeklyRangeFilter = 'week' | 'month';
 
 const demoByMetric: Record<WeeklyMetricFilter, readonly WeeklyDayData[]> = {
   steps: defaultWeeklyProgressDemo,
@@ -55,6 +56,33 @@ const demoByMetric: Record<WeeklyMetricFilter, readonly WeeklyDayData[]> = {
   ],
 };
 
+const demoMonthByMetric: Record<WeeklyMetricFilter, readonly WeeklyDayData[]> = {
+  steps: [
+    { shortLabel: 'W1', current: 0.62, previous: 0.55, hasCurrent: true, isHighlightDay: false },
+    { shortLabel: 'W2', current: 0.7, previous: 0.6, hasCurrent: true, isHighlightDay: false },
+    { shortLabel: 'W3', current: 0.58, previous: 0.64, hasCurrent: true, isHighlightDay: false },
+    { shortLabel: 'W4', current: 0.82, previous: 0.76, hasCurrent: true, isHighlightDay: true },
+  ],
+  run: [
+    { shortLabel: 'W1', current: 0.25, previous: 0.2, hasCurrent: true, isHighlightDay: false },
+    { shortLabel: 'W2', current: 0.4, previous: 0.35, hasCurrent: true, isHighlightDay: false },
+    { shortLabel: 'W3', current: 0.3, previous: 0.42, hasCurrent: true, isHighlightDay: false },
+    { shortLabel: 'W4', current: 0.55, previous: 0.48, hasCurrent: true, isHighlightDay: true },
+  ],
+  bike: [
+    { shortLabel: 'W1', current: 0.5, previous: 0.58, hasCurrent: true, isHighlightDay: false },
+    { shortLabel: 'W2', current: 0.66, previous: 0.6, hasCurrent: true, isHighlightDay: false },
+    { shortLabel: 'W3', current: 0.6, previous: 0.52, hasCurrent: true, isHighlightDay: false },
+    { shortLabel: 'W4', current: 0.78, previous: 0.7, hasCurrent: true, isHighlightDay: true },
+  ],
+  bolt: [
+    { shortLabel: 'W1', current: 0.45, previous: 0.4, hasCurrent: true, isHighlightDay: false },
+    { shortLabel: 'W2', current: 0.6, previous: 0.52, hasCurrent: true, isHighlightDay: false },
+    { shortLabel: 'W3', current: 0.55, previous: 0.6, hasCurrent: true, isHighlightDay: false },
+    { shortLabel: 'W4', current: 0.72, previous: 0.66, hasCurrent: true, isHighlightDay: true },
+  ],
+};
+
 @Component({
   selector: 'app-weekly-progress-card',
   standalone: true,
@@ -68,16 +96,30 @@ export class WeeklyProgressCardComponent {
   /** Filter-Buttons (nur dort anzeigen, wo gewünscht). */
   showFilters = input(false);
 
+  /** Zeitraum-Toggle (Woche/Monat) */
+  showRangeToggle = input(false);
+  range = input<WeeklyRangeFilter>('week');
+  rangeChange = output<WeeklyRangeFilter>();
+
   selectedMetric = signal<WeeklyMetricFilter>('steps');
 
   /** Chart-Daten (per Filter) */
   days = computed<readonly WeeklyDayData[]>(() => {
     const metric = this.selectedMetric();
+    if (this.range() === 'month') {
+      return demoMonthByMetric[metric];
+    }
+
     const fromParent = this.daysByMetric()?.[metric];
     return fromParent ?? demoByMetric[metric];
   });
 
   setMetric(metric: WeeklyMetricFilter): void {
     this.selectedMetric.set(metric);
+  }
+
+  setRange(range: WeeklyRangeFilter): void {
+    if (this.range() === range) return;
+    this.rangeChange.emit(range);
   }
 }
