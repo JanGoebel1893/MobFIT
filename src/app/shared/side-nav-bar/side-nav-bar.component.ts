@@ -10,7 +10,7 @@ import { SupabaseService } from '../../services/supabase.service';
   styleUrl: './side-nav-bar.component.css',
 })
 export class SideNavBarComponent implements OnInit {
-  userName = signal('MobFit User');
+  userName = signal('');
   userSubtitle = signal('');
 
   constructor(private supabase: SupabaseService) {}
