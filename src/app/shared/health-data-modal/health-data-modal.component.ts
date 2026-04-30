@@ -1,6 +1,8 @@
 import { Component, HostListener, effect, inject, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DOCUMENT } from '@angular/common';
+import { LucideAngularModule } from 'lucide-angular';
+import { DropletIcon, FlameIcon, MoonIcon, WeightIcon, XIcon } from 'lucide-angular/src/icons';
 
 export interface HealthDataFormValues {
   caloriesKcal: string;
@@ -13,7 +15,7 @@ export interface HealthDataFormValues {
 @Component({
   selector: 'app-health-data-modal',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, LucideAngularModule],
   templateUrl: './health-data-modal.component.html',
   styleUrl: './health-data-modal.component.css',
 })
@@ -32,6 +34,14 @@ export class HealthDataModalComponent {
     sleepMinutes: '',
     weightKg: '',
     waterLiters: '',
+  };
+
+  readonly icons = {
+    X: XIcon,
+    Flame: FlameIcon,
+    Moon: MoonIcon,
+    Weight: WeightIcon,
+    Droplet: DropletIcon,
   };
 
   private prevHtmlOverflow = '';

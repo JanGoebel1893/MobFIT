@@ -1,6 +1,8 @@
 import { Component, HostListener, effect, inject, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DOCUMENT } from '@angular/common';
+import { LucideAngularModule } from 'lucide-angular';
+import { ActivityIcon, BikeIcon, FootprintsIcon, PlusIcon, XIcon, ZapIcon } from 'lucide-angular/src/icons';
 
 export type GoalsMetricModalVariant = 'setGoals' | 'addProgress';
 
@@ -19,7 +21,7 @@ export interface ProgressEntry {
 @Component({
   selector: 'app-goals-metric-modal',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, LucideAngularModule],
   templateUrl: './goals-metric-modal.component.html',
   styleUrl: './goals-metric-modal.component.css',
 })
@@ -46,6 +48,15 @@ export class GoalsMetricModalComponent {
     jogKm: '0',
     bikeMin: '0',
     activityMin: '0',
+  };
+
+  readonly icons = {
+    X: XIcon,
+    Plus: PlusIcon,
+    Footprints: FootprintsIcon,
+    Activity: ActivityIcon,
+    Bike: BikeIcon,
+    Zap: ZapIcon,
   };
 
   private prevHtmlOverflow = '';

@@ -1,4 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
+import { LucideAngularModule } from 'lucide-angular';
+import { ActivityIcon, BikeIcon, FootprintsIcon, PencilIcon, PlusIcon, ZapIcon } from 'lucide-angular/src/icons';
 import { GoalsTopNavComponent } from '../../shared/goals-top-nav/goals-top-nav.component';
 import {
   HealthMetricCardComponent,
@@ -20,6 +22,7 @@ type GoalsStatsRange = 'week' | 'month';
   selector: 'app-my-goals',
   standalone: true,
   imports: [
+    LucideAngularModule,
     GoalsTopNavComponent,
     HealthMetricCardComponent,
     GoalsMetricModalComponent,
@@ -37,6 +40,13 @@ export class MyGoalsComponent implements OnInit {
   modal: GoalsModalKind = 'off';
   isLoading = signal(true);
   statsRange = signal<GoalsStatsRange>('week');
+  readonly icons = { Pencil: PencilIcon, Plus: PlusIcon };
+  readonly weeklyMetricOptions = [
+    { key: 'steps', title: 'Schritte', icon: FootprintsIcon },
+    { key: 'run', title: 'Joggen', icon: ActivityIcon },
+    { key: 'bike', title: 'Radfahren', icon: BikeIcon },
+    { key: 'bolt', title: 'Aktivitätsminuten', icon: ZapIcon },
+  ] as const;
 
   setGoalsValues = signal<GoalsMetricValues>({
     steps: '10000',
