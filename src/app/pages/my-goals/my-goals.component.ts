@@ -149,12 +149,12 @@ export class MyGoalsComponent implements OnInit {
       },
       {
         ...this.tiles[1],
-        goalText: `/ ${this.formatNumber(jogGoal)}km`,
+        goalText: `/ ${this.formatNumber(jogGoal)} km`,
         progressPercent: this.calcPercent(currentJog, jogGoal),
       },
       {
         ...this.tiles[2],
-        goalText: `/ ${bikeGoal}min`,
+        goalText: `/ ${bikeGoal} min`,
         progressPercent: this.calcPercent(currentBike, bikeGoal),
       },
       {
