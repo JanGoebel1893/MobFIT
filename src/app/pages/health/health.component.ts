@@ -1,4 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
+import { LucideAngularModule } from 'lucide-angular';
+import { DropletIcon, FlameIcon, MoonIcon, PlusIcon, WeightIcon } from 'lucide-angular/src/icons';
 import { GoalsTopNavComponent } from '../../shared/goals-top-nav/goals-top-nav.component';
 import {
   HealthStatCardComponent,
@@ -18,6 +20,7 @@ type HealthStatsRange = 'week' | 'month';
   selector: 'app-health',
   standalone: true,
   imports: [
+    LucideAngularModule,
     GoalsTopNavComponent,
     HealthStatCardComponent,
     HealthDataModalComponent,
@@ -35,6 +38,13 @@ export class HealthComponent implements OnInit {
   showHealthDataModal = false;
   isLoading = signal(true);
   statsRange = signal<HealthStatsRange>('week');
+  readonly icons = { Plus: PlusIcon };
+  readonly weeklyMetricOptions = [
+    { key: 'calories', title: 'Kalorien', icon: FlameIcon },
+    { key: 'sleep', title: 'Schlaf', icon: MoonIcon },
+    { key: 'weight', title: 'Gewicht', icon: WeightIcon },
+    { key: 'water', title: 'Wasser', icon: DropletIcon },
+  ] as const;
   currentFormValues = signal<HealthDataFormValues>({
     caloriesKcal: '', sleepHours: '', sleepMinutes: '', weightKg: '', waterLiters: '',
   });
