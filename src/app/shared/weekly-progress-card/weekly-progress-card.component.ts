@@ -184,6 +184,12 @@ export class WeeklyProgressCardComponent {
   range = input<WeeklyRangeFilter>('week');
   rangeChange = output<WeeklyRangeFilter>();
 
+  /**
+   * Wenn true: nur Daten vom Parent (kein Demo-Fallback).
+   * Leere/fehlende Keys → leeres Chart (Parent soll 0-Balken liefern).
+   */
+  useParentChartDataOnly = input(false);
+
   selectedMetric = signal<string>('steps');
 
   options = computed<readonly WeeklyMetricOption[]>(() => this.metricOptions() ?? defaultMetricOptions);
@@ -201,12 +207,18 @@ export class WeeklyProgressCardComponent {
   /** Chart-Daten (per Filter) */
   days = computed<readonly WeeklyDayData[]>(() => {
     const metric = this.selectedMetric();
+    const parentOnly = this.useParentChartDataOnly();
+
     if (this.range() === 'month') {
-      const fromParent = this.daysByMetricMonth()?.[metric];
+      const bundle = this.daysByMetricMonth();
+      const fromParent = bundle?.[metric];
+      if (parentOnly) return fromParent ?? [];
       return fromParent ?? demoMonthByMetric[metric] ?? [];
     }
 
-    const fromParent = this.daysByMetric()?.[metric];
+    const bundle = this.daysByMetric();
+    const fromParent = bundle?.[metric];
+    if (parentOnly) return fromParent ?? [];
     return fromParent ?? demoByMetric[metric] ?? [];
   });
 

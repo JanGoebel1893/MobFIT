@@ -5,6 +5,7 @@ import { GoalsTopNavComponent } from '../../shared/goals-top-nav/goals-top-nav.c
 import { HealthStatCardComponent, HealthStatCardConfig } from '../../shared/health-stat-card/health-stat-card.component';
 import { HealthDataFormValues, HealthDataModalComponent } from '../../shared/health-data-modal/health-data-modal.component';
 import { SupabaseService } from '../../services/supabase.service';
+import { toLocalDateString } from '../../shared/utils/local-date.utils';
 import { WeeklyProgressCardComponent, WeeklyDayData } from '../../shared/weekly-progress-card/weekly-progress-card.component';
 import { DashboardFooterComponent } from '../../shared/dashboard-footer/dashboard-footer.component';
 
@@ -12,6 +13,9 @@ type HealthStatsRange = 'week' | 'month';
 
 const DE_DAY_LABELS = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
 const WEEK_LABELS   = ['W1', 'W2', 'W3', 'W4'];
+
+/** Monats-Chart + Vorperiode: bis 55 Tage zurück; Puffer → 70 Tage */
+const HEALTH_ENTRIES_LOOKBACK_DAYS = 69;
 
 @Component({
   selector: 'app-health',
@@ -48,11 +52,14 @@ export class HealthComponent implements OnInit {
   });
 
   stats: HealthStatCardConfig[] = [
-    { variant: 'calories', label: 'Kalorien', primaryValue: '-', primaryUnit: 'kcal',  trendText: 'Noch kein Eintrag' },
-    { variant: 'sleep',    label: 'Schlaf',   primaryValue: '-',                        trendText: 'Noch kein Eintrag' },
-    { variant: 'weight',   label: 'Gewicht',  primaryValue: '-', primaryUnit: 'kg',     trendText: 'Noch kein Eintrag' },
-    { variant: 'water',    label: 'Wasser',   primaryValue: '-', primaryUnit: 'Liter',  trendText: 'Noch kein Eintrag' },
+    { variant: 'calories', label: 'Kalorien', primaryValue: '0', primaryUnit: 'kcal',  trendText: '' },
+    { variant: 'sleep',    label: 'Schlaf',   primaryValue: '0h 0m',                 trendText: '' },
+    { variant: 'weight',   label: 'Gewicht',  primaryValue: '0', primaryUnit: 'kg',     trendText: '' },
+    { variant: 'water',    label: 'Wasser',   primaryValue: '0', primaryUnit: 'Liter',  trendText: '' },
   ];
+
+  /** Rohdaten für Karten, Charts und Vergleichszeile */
+  healthEntriesCache = signal<any[]>([]);
 
   chartWeek  = signal<Partial<Record<string, readonly WeeklyDayData[]>>>({});
   chartMonth = signal<Partial<Record<string, readonly WeeklyDayData[]>>>({});
@@ -63,37 +70,35 @@ export class HealthComponent implements OnInit {
     const user = await this.supabase.getUser();
     if (!user) { this.isLoading.set(false); return; }
 
-    const today     = new Date();
-    const sincePrev = this.isoDate(this.addDays(today, -13));
+    const today = new Date();
+    const sinceWide = this.isoDate(this.addDays(today, -HEALTH_ENTRIES_LOOKBACK_DAYS));
 
     const [latestRes, rangeRes] = await Promise.all([
       this.supabase.getLatestHealthEntry(user.id),
-      this.supabase.getHealthEntriesRange(user.id, sincePrev),
+      this.supabase.getHealthEntriesRange(user.id, sinceWide),
     ]);
 
     if (latestRes.data) {
-      this.applyEntryToStats(latestRes.data);
       this.currentFormValues.set(this.buildFormValues(latestRes.data));
     }
 
-    if (rangeRes.data) {
-      this.chartWeek.set(this.buildWeekChart(rangeRes.data, today));
-
-      // Monatsdaten nachladen (28 + 28 Tage)
-      const sincePrevMonth = this.isoDate(this.addDays(today, -55));
-      const { data: monthData } = await this.supabase.getHealthEntriesRange(user.id, sincePrevMonth);
-      if (monthData) this.chartMonth.set(this.buildMonthChart(monthData, today));
-    }
+    this.healthEntriesCache.set(rangeRes.data ?? []);
+    const entries = this.healthEntriesCache();
+    this.chartWeek.set(this.buildWeekChart(entries, today));
+    this.chartMonth.set(this.buildMonthChart(entries, today));
+    this.rebuildHealthStatCards();
 
     this.isLoading.set(false);
   }
 
   openHealthDataModal(): void  { this.showHealthDataModal = true;  }
   closeHealthDataModal(): void { this.showHealthDataModal = false; }
-  setStatsRange(range: HealthStatsRange): void { this.statsRange.set(range); }
+  setStatsRange(range: HealthStatsRange): void {
+    this.statsRange.set(range);
+    this.rebuildHealthStatCards();
+  }
 
   async onHealthDataSave(v: HealthDataFormValues): Promise<void> {
-    this.updateStatsFromForm(v);
     this.currentFormValues.set(v);
     this.showHealthDataModal = false;
 
@@ -114,11 +119,14 @@ export class HealthComponent implements OnInit {
       water:       isNaN(watNum) ? null : watNum,
     });
 
-    // Chart nach Speichern aktualisieren
-    const today      = new Date();
-    const sincePrev  = this.isoDate(this.addDays(today, -13));
-    const { data }   = await this.supabase.getHealthEntriesRange(user.id, sincePrev);
-    if (data) this.chartWeek.set(this.buildWeekChart(data, today));
+    const today = new Date();
+    const sinceWide = this.isoDate(this.addDays(today, -HEALTH_ENTRIES_LOOKBACK_DAYS));
+    const { data } = await this.supabase.getHealthEntriesRange(user.id, sinceWide);
+    this.healthEntriesCache.set(data ?? []);
+    const entries = this.healthEntriesCache();
+    this.chartWeek.set(this.buildWeekChart(entries, today));
+    this.chartMonth.set(this.buildMonthChart(entries, today));
+    this.rebuildHealthStatCards();
   }
 
   // ─── Chart-Builder ──────────────────────────────────────────────
@@ -146,14 +154,6 @@ export class HealthComponent implements OnInit {
         if (v > 0) valByDate[row.date] = v; // health_entries: 1 pro Tag → kein Summieren nötig
       }
 
-      const maxPrev = Math.max(
-        1,
-        ...Array.from({ length: 7 }, (_, i) => {
-          const d = this.isoDate(this.addDays(today, i - 7 - todayDow));
-          return valByDate[d] ?? 0;
-        })
-      );
-
       const days: WeeklyDayData[] = [];
       for (let i = 0; i < 7; i++) {
         const date    = this.addDays(today, i - todayDow);
@@ -161,11 +161,12 @@ export class HealthComponent implements OnInit {
         const isPast  = dateIso <= todayIso;
         const curr    = valByDate[dateIso] ?? 0;
         const prev    = valByDate[this.isoDate(this.addDays(date, -7))] ?? 0;
+        const denom   = Math.max(1, curr, prev);
 
         days.push({
           shortLabel:     DE_DAY_LABELS[i],
-          current:        isPast ? Math.min(1, curr / maxPrev) : 0,
-          previous:       Math.min(1, prev / maxPrev),
+          current:        isPast ? Math.min(1, curr / denom) : 0,
+          previous:       Math.min(1, prev / denom),
           hasCurrent:     isPast,
           isHighlightDay: dateIso === todayIso,
         });
@@ -218,44 +219,157 @@ export class HealthComponent implements OnInit {
       const curr  = weekSums.map((s, i) => isAvg && weekCounts[i]     > 0 ? s / weekCounts[i]     : s);
       const prev  = weekSumsPrev.map((s, i) => isAvg && weekCountsPrev[i] > 0 ? s / weekCountsPrev[i] : s);
 
-      const maxVal = Math.max(1, ...curr, ...prev);
-      result[key] = WEEK_LABELS.map((label, i) => ({
-        shortLabel:     label,
-        current:        Math.min(1, curr[i] / maxVal),
-        previous:       Math.min(1, prev[i] / maxVal),
-        hasCurrent:     true,
-        isHighlightDay: i === 3,
-      }));
+      result[key] = WEEK_LABELS.map((label, i) => {
+        const denom = Math.max(1, curr[i], prev[i]);
+        return {
+          shortLabel:     label,
+          current:        Math.min(1, curr[i] / denom),
+          previous:       Math.min(1, prev[i] / denom),
+          hasCurrent:     true,
+          isHighlightDay: i === 3,
+        };
+      });
     }
 
     return result;
   }
 
-  // ─── Stats-Builder ──────────────────────────────────────────────
+  // ─── Stats-Builder (Backend, Zeitraum vs. Vorperiode) ───────────
 
-  private applyEntryToStats(data: any): void {
-    const sleepDisplay = (data.sleep_hours != null && data.sleep_mins != null)
-      ? `${data.sleep_hours}h ${data.sleep_mins}m` : '-';
+  private rebuildHealthStatCards(): void {
+    const today = new Date();
+    const b = this.healthPeriodBounds(today, this.statsRange());
+    const entries = this.healthEntriesCache();
+
+    const curCal = this.sumCaloriesBetween(entries, b.curStart, b.curEnd);
+    const curSleep = this.avgSleepMinutesBetween(entries, b.curStart, b.curEnd);
+    const curW = this.avgWeightBetween(entries, b.curStart, b.curEnd);
+    const curWater = this.sumWaterBetween(entries, b.curStart, b.curEnd);
 
     this.stats = [
-      { ...this.stats[0], primaryValue: data.calories  != null ? data.calories.toLocaleString('de-DE') : '-' },
-      { ...this.stats[1], primaryValue: sleepDisplay, primaryUnit: undefined },
-      { ...this.stats[2], primaryValue: data.weight_kg != null ? String(data.weight_kg) : '-' },
-      { ...this.stats[3], primaryValue: data.water     != null ? String(data.water)     : '-' },
+      {
+        variant: 'calories',
+        label: 'Kalorien',
+        periodLabel: b.periodTitle,
+        primaryValue: curCal.toLocaleString('de-DE'),
+        primaryUnit: 'kcal',
+        trendText: '',
+      },
+      {
+        variant: 'sleep',
+        label: 'Schlaf',
+        periodLabel: b.periodTitle,
+        primaryValue: this.formatSleepMinutes(curSleep),
+        trendText: '',
+      },
+      {
+        variant: 'weight',
+        label: 'Gewicht',
+        periodLabel: b.periodTitle,
+        primaryValue: curW != null ? curW.toFixed(1).replace('.', ',') : '0',
+        primaryUnit: 'kg',
+        trendText: '',
+      },
+      {
+        variant: 'water',
+        label: 'Wasser',
+        periodLabel: b.periodTitle,
+        primaryValue: curWater.toFixed(1).replace('.', ','),
+        primaryUnit: 'Liter',
+        trendText: '',
+      },
     ];
   }
 
-  private updateStatsFromForm(v: HealthDataFormValues): void {
-    const calDigits  = v.caloriesKcal.replace(/\D/g, '');
-    const calNum     = parseInt(calDigits, 10);
-    const calDisplay = calDigits && !isNaN(calNum) ? calNum.toLocaleString('de-DE') : '-';
+  private healthPeriodBounds(
+    today: Date,
+    range: HealthStatsRange
+  ): {
+    curStart: string;
+    curEnd: string;
+    prevStart: string;
+    prevEnd: string;
+    periodTitle: string;
+    prevTitle: string;
+  } {
+    const curEnd = this.isoDate(today);
+    if (range === 'week') {
+      const todayDow = (today.getDay() + 6) % 7;
+      const monday = this.addDays(today, -todayDow);
+      const curStart = this.isoDate(monday);
+      const prevEnd = this.isoDate(this.addDays(monday, -1));
+      const prevStart = this.isoDate(this.addDays(monday, -7));
+      return {
+        curStart,
+        curEnd,
+        prevStart,
+        prevEnd,
+        periodTitle: 'Diese Woche',
+        prevTitle: 'Vorwoche',
+      };
+    }
+    const curStart = this.isoDate(this.addDays(today, -27));
+    const prevEnd = this.isoDate(this.addDays(today, -28));
+    const prevStart = this.isoDate(this.addDays(today, -55));
+    return {
+      curStart,
+      curEnd,
+      prevStart,
+      prevEnd,
+      periodTitle: 'Letzte 28 Tage',
+      prevTitle: 'Vorherige 28 Tage',
+    };
+  }
 
-    this.stats = [
-      { ...this.stats[0], primaryValue: calDisplay },
-      { ...this.stats[1], primaryValue: `${v.sleepHours.trim()}h ${v.sleepMinutes.trim()}m`, primaryUnit: undefined },
-      { ...this.stats[2], primaryValue: v.weightKg.trim() },
-      { ...this.stats[3], primaryValue: v.waterLiters.trim(), primaryUnit: 'Liter' },
-    ];
+  private sumCaloriesBetween(entries: any[], fromIso: string, toIso: string): number {
+    let s = 0;
+    for (const row of entries) {
+      if (row.date < fromIso || row.date > toIso) continue;
+      if (row.calories == null) continue;
+      s += Number(row.calories);
+    }
+    return s;
+  }
+
+  private sumWaterBetween(entries: any[], fromIso: string, toIso: string): number {
+    let s = 0;
+    for (const row of entries) {
+      if (row.date < fromIso || row.date > toIso) continue;
+      if (row.water == null) continue;
+      s += Number(row.water);
+    }
+    return s;
+  }
+
+  /** Durchschnittliche Schlafdauer in Minuten (nur Tage mit Stunden+Minuten) */
+  private avgSleepMinutesBetween(entries: any[], fromIso: string, toIso: string): number {
+    let sum = 0;
+    let n = 0;
+    for (const row of entries) {
+      if (row.date < fromIso || row.date > toIso) continue;
+      if (row.sleep_hours == null || row.sleep_mins == null) continue;
+      sum += Number(row.sleep_hours) * 60 + Number(row.sleep_mins);
+      n++;
+    }
+    return n ? sum / n : 0;
+  }
+
+  private avgWeightBetween(entries: any[], fromIso: string, toIso: string): number | null {
+    let sum = 0;
+    let n = 0;
+    for (const row of entries) {
+      if (row.date < fromIso || row.date > toIso) continue;
+      if (row.weight_kg == null) continue;
+      sum += Number(row.weight_kg);
+      n++;
+    }
+    return n ? sum / n : null;
+  }
+
+  private formatSleepMinutes(totalMin: number): string {
+    const h = Math.floor(totalMin / 60);
+    const m = Math.round(totalMin % 60);
+    return `${h}h ${m}m`;
   }
 
   private buildFormValues(data: any): HealthDataFormValues {
@@ -276,7 +390,8 @@ export class HealthComponent implements OnInit {
     return d;
   }
 
+  /** Lokales Kalenderdatum — gleiche Konvention wie `health_entries.date` */
   private isoDate(date: Date): string {
-    return date.toISOString().split('T')[0];
+    return toLocalDateString(date);
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { environment } from "../../environments/environment";
+import { todayLocalDateString } from "../shared/utils/local-date.utils";
 
 @Injectable({ providedIn: "root" })
 export class SupabaseService {
@@ -87,7 +88,7 @@ export class SupabaseService {
     weight_kg: number | null;
     water: number | null;
   }) {
-    const today = new Date().toISOString().split('T')[0];
+    const today = todayLocalDateString();
     return await this.supabase
       .from('health_entries')
       .upsert(
@@ -120,7 +121,7 @@ export class SupabaseService {
 
   /** Heutigen Tages-Gesamtwert laden (Summe aller Einträge) */
   async getTodayActivitySums(userId: string) {
-    const today = new Date().toISOString().split('T')[0];
+    const today = todayLocalDateString();
     return await this.supabase
       .from('activity_logs')
       .select('steps, jog_km, bike_min, activity_min')
@@ -135,7 +136,7 @@ export class SupabaseService {
     bike_min?: number | null;
     activity_min?: number | null;
   }) {
-    const today = new Date().toISOString().split('T')[0];
+    const today = todayLocalDateString();
     return await this.supabase
       .from('activity_logs')
       .insert({ user_id: userId, date: today, ...data });

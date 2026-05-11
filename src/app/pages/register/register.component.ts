@@ -29,7 +29,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     const user = this.username.trim();
     const mail = this.email.trim();
     const pass = this.password;
-    if (!user || !mail || !pass || pass.length < this.passwordMinLength) {
+    if (user.length < 2 || !mail || !pass || pass.length < this.passwordMinLength) {
       return false;
     }
     if (!this.isValidEmail(mail)) {

@@ -300,6 +300,27 @@
   transform: scale(0.99);
 }
 
+.login-form__submit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.login-form__submit:disabled:hover {
+  background: #5d5c5b;
+}
+
+.login-form__error {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #9f1239;
+  background: #ffe4e6;
+}
+
 .login-form__footer {
   margin: clamp(16px, 2.5dvh, 28px) 0 0;
   text-align: center;
