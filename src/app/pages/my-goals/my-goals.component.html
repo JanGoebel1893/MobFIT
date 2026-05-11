@@ -6,7 +6,7 @@
         <section class="goals-hero" aria-labelledby="goals-hero-heading">
           <div class="goals-hero__text">
             <p class="goals-hero__eyebrow">Tagesübersicht</p>
-            <h2 id="goals-hero-heading" class="goals-hero__headline">Da is meine Oma ja besser!</h2>
+            <h2 id="goals-hero-heading" class="goals-hero__headline">{{quote()}}</h2>
           </div>
           <div class="goals-hero__actions">
             <button type="button" class="goals-hero__btn goals-hero__btn--goals" (click)="openSetGoalsModal()">
@@ -34,6 +34,8 @@
           [metricOptions]="weeklyMetricOptions"
           [showRangeToggle]="true"
           [range]="statsRange()"
+          [daysByMetric]="chartWeek()"
+          [daysByMetricMonth]="chartMonth()"
           (rangeChange)="setStatsRange($event)"
         />
       </div>
