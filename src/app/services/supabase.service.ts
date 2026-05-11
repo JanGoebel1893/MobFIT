@@ -140,4 +140,23 @@ export class SupabaseService {
       .from('activity_logs')
       .insert({ user_id: userId, date: today, ...data });
   }
+
+  async getActivityLogsRange(userId: string, since: string) {
+    return await this.supabase
+      .from('activity_logs')
+      .select('date, steps, jog_km, bike_min, activity_min')
+      .eq('user_id', userId)
+      .gte('date', since)
+      .order('date', { ascending: true });
+  }
+
+  /** Health-Einträge der letzten N Tage/Wochen für den Chart */
+  async getHealthEntriesRange(userId: string, since: string) {
+    return await this.supabase
+      .from('health_entries')
+      .select('date, calories, sleep_hours, sleep_mins, weight_kg, water')
+      .eq('user_id', userId)
+      .gte('date', since)
+      .order('date', { ascending: true });
+  }
 }
