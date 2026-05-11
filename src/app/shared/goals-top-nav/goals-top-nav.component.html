@@ -1,3 +1,11 @@
 <header class="goals-top-nav">
   <h1 class="goals-top-nav__title">{{ pageTitle() }}</h1>
+  @if (isAuthenticated()) {
+    <div class="goals-top-nav__actions">
+      <a routerLink="/logout" class="goals-top-nav__logout" aria-label="Abmelden">
+        <lucide-icon class="goals-top-nav__logout-icon" [img]="icons.LogOut" [size]="18" aria-hidden="true" />
+        <span class="goals-top-nav__logout-text">Abmelden</span>
+      </a>
+    </div>
+  }
 </header>

@@ -1,101 +1,37 @@
 <article
   class="wpc"
   role="group"
-  aria-label="Wöchentlicher Fortschritt, Vergleich zu letzter Woche"
+  [attr.aria-label]="range() === 'week' ? 'Fortschritt, Vergleich zur Vorwoche' : 'Fortschritt, Vergleich zum vorherigen Monatszeitraum'"
 >
   <header
     class="wpc__header"
     [class.wpc__header--with-controls]="showFilters() || showRangeToggle()"
   >
     <div class="wpc__header-text">
-      <h3 class="wpc__title">Wöchentlicher Fortschritt</h3>
-      <p class="wpc__subtitle">Vergleich zu letzter Woche</p>
+      <h3 class="wpc__title">Fortschritt</h3>
+      <p class="wpc__subtitle">
+        @if (range() === 'week') {
+          Tageswerte vs. gleicher Tag Vorwoche
+        } @else {
+          Wochensummen vs. Vorperiode
+        }
+      </p>
     </div>
 
     @if (showFilters()) {
       <nav class="wpc__filters" aria-label="Statistik nach Kategorie filtern">
-        <button
-          type="button"
-          class="wpc__filter"
-          [class.wpc__filter--active]="selectedMetric() === 'steps'"
-          [attr.aria-pressed]="selectedMetric() === 'steps'"
-          (click)="setMetric('steps')"
-          title="Schritte"
-        >
-          <svg class="wpc__filter-icon" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              d="M8.5 18.5c-1.8-2.8-1.2-6 1.2-6.6 2.2-.5 4.2 2.2 3 6.6"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M14.5 16c-1.8-2.8-.8-6 1.6-6.6 2-.6 3.8 2.8 2.2 6.6"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </button>
-
-        <button
-          type="button"
-          class="wpc__filter"
-          [class.wpc__filter--active]="selectedMetric() === 'run'"
-          [attr.aria-pressed]="selectedMetric() === 'run'"
-          (click)="setMetric('run')"
-          title="Joggen"
-        >
-          <svg class="wpc__filter-icon" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="14.5" cy="5" r="2.25" stroke="currentColor" stroke-width="2" />
-            <path
-              d="M13.5 7.5 10 11l2 4.5-2.5 7M13.5 7.5l5 1.5 2.5 7.5M10 11l-4-1M18.5 9l3-2.5M8 14.5l-3 3"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </button>
-
-        <button
-          type="button"
-          class="wpc__filter"
-          [class.wpc__filter--active]="selectedMetric() === 'bike'"
-          [attr.aria-pressed]="selectedMetric() === 'bike'"
-          (click)="setMetric('bike')"
-          title="Radfahren"
-        >
-          <svg class="wpc__filter-icon" width="24" height="22" viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="6.5" cy="17" r="3.5" stroke="currentColor" stroke-width="2" />
-            <circle cx="18.5" cy="17" r="3.5" stroke="currentColor" stroke-width="2" />
-            <path
-              d="M6.5 17h4l2.5-8 3.5 8h1.5M13 9l2.5-4.5H19M13 9h4.5"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </button>
-
-        <button
-          type="button"
-          class="wpc__filter"
-          [class.wpc__filter--active]="selectedMetric() === 'bolt'"
-          [attr.aria-pressed]="selectedMetric() === 'bolt'"
-          (click)="setMetric('bolt')"
-          title="Aktivitätsminuten"
-        >
-          <svg class="wpc__filter-icon" width="20" height="22" viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              fill="currentColor"
-              d="M14.5 1.5 5 15.5h6.5L10 22.5 19 10.5h-6.2l1.7-9z"
-            />
-          </svg>
-        </button>
+        @for (opt of options(); track opt.key) {
+          <button
+            type="button"
+            class="wpc__filter"
+            [class.wpc__filter--active]="selectedMetric() === opt.key"
+            [attr.aria-pressed]="selectedMetric() === opt.key"
+            (click)="setMetric(opt.key)"
+            [title]="opt.title"
+          >
+            <lucide-icon class="wpc__filter-icon" [img]="opt.icon" [size]="22" aria-hidden="true" />
+          </button>
+        }
       </nav>
     }
 

@@ -1,6 +1,15 @@
-import { Component, HostListener, effect, inject, input, output } from '@angular/core';
+import { Component, HostListener, effect, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DOCUMENT } from '@angular/common';
+import { LucideAngularModule } from 'lucide-angular';
+import { DropletIcon, FlameIcon, MoonIcon, WeightIcon, XIcon } from 'lucide-angular/src/icons';
+import {
+  METRIC_LIMITS,
+  validateOptionalNonNegativeDecimal,
+  validateOptionalNonNegativeInt,
+  validateOptionalWeightKg,
+  validateSleepParts,
+} from '../utils/numeric-form.utils';
 
 export interface HealthDataFormValues {
   caloriesKcal: string;
@@ -13,7 +22,7 @@ export interface HealthDataFormValues {
 @Component({
   selector: 'app-health-data-modal',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, LucideAngularModule],
   templateUrl: './health-data-modal.component.html',
   styleUrl: './health-data-modal.component.css',
 })
@@ -34,6 +43,16 @@ export class HealthDataModalComponent {
     waterLiters: '',
   };
 
+  validationMessage = signal<string | null>(null);
+
+  readonly icons = {
+    X: XIcon,
+    Flame: FlameIcon,
+    Moon: MoonIcon,
+    Weight: WeightIcon,
+    Droplet: DropletIcon,
+  };
+
   private prevHtmlOverflow = '';
   private prevBodyOverflow = '';
 
@@ -41,6 +60,7 @@ export class HealthDataModalComponent {
     effect(() => {
       const isOpen = this.open();
       if (isOpen) {
+        this.validationMessage.set(null);
         // Nur beim Öffnen die Werte setzen
         const values = this.initialValues();
         this.form = values
@@ -65,6 +85,28 @@ export class HealthDataModalComponent {
 
   close(): void  { this.closed.emit(); }
   onBackdropClick(): void { this.close(); }
-  onSave(): void { this.save.emit({ ...this.form }); this.close(); }
+
+  onSave(): void {
+    this.validationMessage.set(null);
+    const checks = [
+      validateOptionalNonNegativeInt(this.form.caloriesKcal, METRIC_LIMITS.caloriesKcal, 'Kalorien (kcal)'),
+      validateSleepParts(this.form.sleepHours, this.form.sleepMinutes),
+      validateOptionalWeightKg(this.form.weightKg),
+      validateOptionalNonNegativeDecimal(
+        this.form.waterLiters,
+        METRIC_LIMITS.waterLitersMax,
+        'Flüssigkeit (Liter)',
+        3
+      ),
+    ] as const;
+    for (const c of checks) {
+      if (!c.ok) {
+        this.validationMessage.set(c.message);
+        return;
+      }
+    }
+    this.save.emit({ ...this.form });
+    this.close();
+  }
 
 }

@@ -85,6 +85,17 @@
   background: rgba(26, 28, 31, 0.06);
 }
 
+.hdm__validation {
+  margin: -16px 0 0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #9f1239;
+  background: #ffe4e6;
+}
+
 .hdm__body {
   display: flex;
   flex-direction: column;

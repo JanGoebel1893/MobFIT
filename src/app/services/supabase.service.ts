@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { environment } from "../../environments/environment";
+import { todayLocalDateString } from "../shared/utils/local-date.utils";
 
 @Injectable({ providedIn: "root" })
 export class SupabaseService {
@@ -87,7 +88,7 @@ export class SupabaseService {
     weight_kg: number | null;
     water: number | null;
   }) {
-    const today = new Date().toISOString().split('T')[0];
+    const today = todayLocalDateString();
     return await this.supabase
       .from('health_entries')
       .upsert(
@@ -116,5 +117,47 @@ export class SupabaseService {
         { user_id: userId, ...data },
         { onConflict: 'user_id' }
       );
+  }
+
+  /** Heutigen Tages-Gesamtwert laden (Summe aller Einträge) */
+  async getTodayActivitySums(userId: string) {
+    const today = todayLocalDateString();
+    return await this.supabase
+      .from('activity_logs')
+      .select('steps, jog_km, bike_min, activity_min')
+      .eq('user_id', userId)
+      .eq('date', today);
+  }
+
+  /** Neuen Aktivitäts-Eintrag hinzufügen */
+  async addActivityLog(userId: string, data: {
+    steps?: number | null;
+    jog_km?: number | null;
+    bike_min?: number | null;
+    activity_min?: number | null;
+  }) {
+    const today = todayLocalDateString();
+    return await this.supabase
+      .from('activity_logs')
+      .insert({ user_id: userId, date: today, ...data });
+  }
+
+  async getActivityLogsRange(userId: string, since: string) {
+    return await this.supabase
+      .from('activity_logs')
+      .select('date, steps, jog_km, bike_min, activity_min')
+      .eq('user_id', userId)
+      .gte('date', since)
+      .order('date', { ascending: true });
+  }
+
+  /** Health-Einträge der letzten N Tage/Wochen für den Chart */
+  async getHealthEntriesRange(userId: string, since: string) {
+    return await this.supabase
+      .from('health_entries')
+      .select('date, calories, sleep_hours, sleep_mins, weight_kg, water')
+      .eq('user_id', userId)
+      .gte('date', since)
+      .order('date', { ascending: true });
   }
 }

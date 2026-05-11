@@ -13,9 +13,7 @@
           <p class="hdm__subtitle">Aktualisiere deine täglichen Werte für eine präzise Auswertung.</p>
         </div>
         <button type="button" class="hdm__close" (click)="close()" aria-label="Schließen">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-          </svg>
+          <lucide-icon [img]="icons.X" [size]="14" aria-hidden="true" />
         </button>
       </header>
 
@@ -24,15 +22,7 @@
           <div class="hdm-field">
             <div class="hdm-field__label">
               <span class="hdm-field__icon hdm-field__icon--flame" aria-hidden="true">
-                <svg width="11" height="12" viewBox="0 0 16 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M8 1v3M5.5 3.5l-1.5 1.5M10.5 3.5l1.5 1.5M8 6c-2.5 2-4 4.5-4 7a4 4 0 0 0 8 0c0-2.5-1.5-5-4-7z"
-                    stroke="currentColor"
-                    stroke-width="1.75"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
+                <lucide-icon [img]="icons.Flame" [size]="14" aria-hidden="true" />
               </span>
               <span class="hdm-field__label-text">Kalorien (kcal)</span>
             </div>
@@ -51,15 +41,7 @@
           <div class="hdm-field">
             <div class="hdm-field__label">
               <span class="hdm-field__icon hdm-field__icon--moon" aria-hidden="true">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M21 14.5A7.5 7.5 0 0 1 8.5 6 7.48 7.48 0 0 1 10 2.05 9 9 0 1 0 21 14.5z"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
+                <lucide-icon [img]="icons.Moon" [size]="14" aria-hidden="true" />
               </span>
               <span class="hdm-field__label-text">Schlaf (Std/Min)</span>
             </div>
@@ -92,15 +74,7 @@
           <div class="hdm-field">
             <div class="hdm-field__label">
               <span class="hdm-field__icon hdm-field__icon--scale" aria-hidden="true">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M12 3v4M9 7h6M6 21h12l-1.5-12h-9L6 21z"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
+                <lucide-icon [img]="icons.Weight" [size]="14" aria-hidden="true" />
               </span>
               <span class="hdm-field__label-text">Gewicht (kg)</span>
             </div>
@@ -119,15 +93,7 @@
           <div class="hdm-field">
             <div class="hdm-field__label">
               <span class="hdm-field__icon hdm-field__icon--drop" aria-hidden="true">
-                <svg width="11" height="13" viewBox="0 0 18 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M9 18c3.5 0 6-2.1 6-5.2C15 9.5 9 2 9 2S3 9.5 3 12.8C3 15.9 5.5 18 9 18z"
-                    stroke="currentColor"
-                    stroke-width="1.75"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
+                <lucide-icon [img]="icons.Droplet" [size]="14" aria-hidden="true" />
               </span>
               <span class="hdm-field__label-text">Flüssigkeit (Liter)</span>
             </div>
@@ -143,6 +109,10 @@
             </div>
           </div>
         </div>
+
+        @if (validationMessage()) {
+          <p class="hdm__validation" role="alert">{{ validationMessage() }}</p>
+        }
 
         <div class="hdm__footer">
           <button type="button" class="hdm__btn hdm__btn--ghost" (click)="close()">Abbrechen</button>
