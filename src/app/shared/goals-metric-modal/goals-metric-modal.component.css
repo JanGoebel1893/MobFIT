@@ -89,6 +89,17 @@
   background: rgba(26, 28, 31, 0.06);
 }
 
+.gmm__validation {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #9f1239;
+  background: #ffe4e6;
+}
+
 .gmm__body {
   padding: 24px 40px 40px;
   flex: 1 1 auto;

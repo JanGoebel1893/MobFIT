@@ -110,6 +110,10 @@
           </div>
         </div>
 
+        @if (validationMessage()) {
+          <p class="hdm__validation" role="alert">{{ validationMessage() }}</p>
+        }
+
         <div class="hdm__footer">
           <button type="button" class="hdm__btn hdm__btn--ghost" (click)="close()">Abbrechen</button>
           <button type="button" class="hdm__btn hdm__btn--primary" (click)="onSave()">Speichern</button>

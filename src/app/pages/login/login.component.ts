@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { SupabaseService } from '../../services/supabase.service';
+import { isValidEmailFormat } from '../../shared/utils/numeric-form.utils';
 
 @Component({
   selector: 'app-login',
@@ -38,13 +39,22 @@ export class LoginComponent implements OnInit, OnDestroy {
     document.body.style.overflow = this.prevBodyOverflow;
   }
 
+  get isLoginFormValid(): boolean {
+    const mail = this.email.trim();
+    return mail.length > 0 && isValidEmailFormat(mail) && this.password.length > 0;
+  }
+
   async onSubmit(event: Event): Promise<void> {
     event.preventDefault();
     this.errorMessage = '';
+    if (!this.isLoginFormValid) {
+      this.errorMessage = 'Bitte eine gültige E-Mail-Adresse und ein Passwort eingeben.';
+      return;
+    }
     this.isLoading = true;
 
     try {
-      await this.supabase.signIn(this.email, this.password, true);
+      await this.supabase.signIn(this.email.trim(), this.password, true);
       this.router.navigate(['/health']);
     } catch (error: any) {
       this.errorMessage = 'Login fehlgeschlagen. Bitte Email und Passwort prüfen.';

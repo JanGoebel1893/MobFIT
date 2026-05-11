@@ -171,6 +171,10 @@
             }
           </div>
         </div>
+
+        @if (validationMessage()) {
+          <p class="gmm__validation" role="alert">{{ validationMessage() }}</p>
+        }
       </div>
 
       @if (variant() === 'setGoals') {

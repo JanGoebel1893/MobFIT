@@ -27,7 +27,7 @@
 
         <div class="login-form__fields">
           <div class="login-form__field">
-            <label class="login-form__label" for="login-username">Email</label>
+            <label class="login-form__label" for="login-email">E-Mail</label>
             <input
               id="login-email"
               name="email"
@@ -64,7 +64,13 @@
             <a href="#" class="login-form__forgot" (click)="$event.preventDefault()">Forgot password?</a>
           </div>
 
-          <button type="submit" class="login-form__submit">Login</button>
+          @if (errorMessage) {
+            <p class="login-form__error" role="alert">{{ errorMessage }}</p>
+          }
+
+          <button type="submit" class="login-form__submit" [disabled]="!isLoginFormValid || isLoading">
+            Login
+          </button>
         </div>
 
         <p class="login-form__footer">
