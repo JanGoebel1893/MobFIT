@@ -14,9 +14,19 @@ export class SupabaseService {
       {
         auth: {
           lock: async (name, acquireTimeout, fn) => fn(),
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true,
         }
       }
     );
+  }
+
+  /** Postgres-/REST-Fehler nach außen geben (sonst „speichert nicht“ ohne Hinweis). */
+  private throwIfDbError(context: string, error: { message: string; details?: string; hint?: string } | null): void {
+    if (!error) return;
+    console.error(`[MobFIT ${context}]`, error.message, error.details ?? "", error.hint ?? "");
+    throw new Error(error.message || context);
   }
 
   async signUp(email: string, password: string, username: string, age: number, height: number) {
@@ -33,7 +43,7 @@ export class SupabaseService {
       height
     });
 
-    if(profileError) throw profileError;
+    this.throwIfDbError("profiles.insert", profileError);
   }
 
   async signIn(email: string, password: string, remember: boolean) {
@@ -43,11 +53,12 @@ export class SupabaseService {
     });
     if (error) throw error;
 
-    if (!remember) {
-      await this.supabase.auth.updateUser({});
-      sessionStorage.setItem('supabase_no_persist', 'true');
-    } else {
-      sessionStorage.removeItem('supabase_no_persist');
+    if (typeof window !== "undefined") {
+      if (remember) {
+        localStorage.setItem("mobfit_remember_me", "1");
+      } else {
+        localStorage.removeItem("mobfit_remember_me");
+      }
     }
 
     return data;
@@ -59,8 +70,11 @@ export class SupabaseService {
   }
 
   async signOut() {
-    const { error } = await this.supabase.auth.signOut();
-    if (error) throw error;
+    const { error } = await this.supabase.auth.signOut({ scope: "global" });
+    if (error) {
+      const { error: localErr } = await this.supabase.auth.signOut({ scope: "local" });
+      if (localErr) throw localErr;
+    }
   }
 
   async getProfile(userId: string) {
@@ -89,12 +103,13 @@ export class SupabaseService {
     water: number | null;
   }) {
     const today = todayLocalDateString();
-    return await this.supabase
+    const { error } = await this.supabase
       .from('health_entries')
       .upsert(
         { user_id: userId, date: today, ...data },
         { onConflict: 'user_id,date' }
       );
+    this.throwIfDbError("health_entries.upsert", error);
   }
 
   async getGoalTargets(userId: string) {
@@ -111,12 +126,13 @@ export class SupabaseService {
     bike_min: number | null;
     activity_min: number | null;
   }) {
-    return await this.supabase
+    const { error } = await this.supabase
       .from('goal_targets')
       .upsert(
         { user_id: userId, ...data },
         { onConflict: 'user_id' }
       );
+    this.throwIfDbError("goal_targets.upsert", error);
   }
 
   /** Heutigen Tages-Gesamtwert laden (Summe aller Einträge) */
@@ -137,9 +153,10 @@ export class SupabaseService {
     activity_min?: number | null;
   }) {
     const today = todayLocalDateString();
-    return await this.supabase
+    const { error } = await this.supabase
       .from('activity_logs')
       .insert({ user_id: userId, date: today, ...data });
+    this.throwIfDbError("activity_logs.insert", error);
   }
 
   async getActivityLogsRange(userId: string, since: string) {

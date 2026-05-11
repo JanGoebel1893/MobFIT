@@ -46,9 +46,32 @@ Trage dort ein:
 Erwartete **Datenbank-/Auth-Struktur** (Auszug, muss zu euren Supabase-Tabellen passen):
 
 - `profiles` – Nutzerprofil (u. a. `username`, `age`, `height`)
-- `health_entries` – Tageswerte (`user_id`, `date`, Kalorien, Schlaf, Gewicht, Wasser)
-- `goal_targets` – Ziele pro Nutzer
-- `activity_logs` – Aktivität pro Tag (`steps`, `jog_km`, `bike_min`, `activity_min`)
+- `health_entries` – Tageswerte (`user_id`, `date`, Kalorien, Schlaf, Gewicht, Wasser). Für **Upsert** im Frontend muss es einen **eindeutigen Constraint auf `(user_id, date)`** geben (z. B. `UNIQUE (user_id, date)`).
+- `goal_targets` – Ziele pro Nutzer (Upsert per `user_id`)
+- `activity_logs` – Aktivität (`steps`, `jog_km`, `bike_min`, `activity_min`). Die App legt **mehrere Zeilen pro Tag** an (Fortschritt mehrfach hinzufügen); eine **Unique-Constraint nur auf `(user_id, date)`** würde zweite Einträge blockieren.
+
+### Row Level Security (RLS)
+
+Wenn nur Ziele speichern gehen, Health- oder Aktivitätsdaten aber nicht: fast immer **fehlende oder zu strenge RLS-Policies** für `health_entries` und `activity_logs` (oder Constraint-Konflikt wie oben).
+
+Im SQL-Editor (nur als Orientierung, an eure Tabellen anpassen):
+
+```sql
+-- Beispiel: eingeloggte Nutzer dürfen eigene Zeilen lesen/schreiben
+create policy "health_own_select" on health_entries for select using (auth.uid() = user_id);
+create policy "health_own_insert" on health_entries for insert with check (auth.uid() = user_id);
+create policy "health_own_update" on health_entries for update using (auth.uid() = user_id);
+
+create policy "activity_own_select" on activity_logs for select using (auth.uid() = user_id);
+create policy "activity_own_insert" on activity_logs for insert with check (auth.uid() = user_id);
+create policy "activity_own_update" on activity_logs for update using (auth.uid() = user_id);
+```
+
+Nach einem fehlgeschlagenen Speichern zeigt die App jetzt die **Fehlermeldung von Supabase** (z. B. „new row violates row-level security policy“).
+
+## Routing / Startseite
+
+Nach **Login**, **Registrierung** oder Aufruf von `/` **mit bestehender Session** landet man auf **`/my-goals`** (Konstante `DEFAULT_AUTHENTICATED_ROUTE` in `src/app/core/auth.constants.ts`).
 
 ## Entwicklung
 
@@ -72,8 +95,11 @@ npm run build
 
 Ausgabe: `dist/mobfit/`. Für Production werden per `fileReplacements` die Umgebungswerte aus `environment.prod.ts` eingebunden – dort `supabaseUrl` und `supabaseKey` vor dem Deploy setzen.
 
+## Projektstruktur (Auszug)
+
 ```
 src/app/
+├── core/            # z. B. DEFAULT_AUTHENTICATED_ROUTE
 ├── pages/           # Routen-Seiten (login, register, health, my-goals, …)
 ├── shared/          # Wiederverwendbare UI (Modals, Cards, Top-Nav, …)
 ├── services/        # u. a. SupabaseService

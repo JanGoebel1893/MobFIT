@@ -1,5 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
+import { DEFAULT_AUTHENTICATED_ROUTE } from '../core/auth.constants';
 import { SupabaseService } from '../services/supabase.service';
 
 export const redirectGuard: CanActivateFn = async () => {
@@ -9,7 +10,7 @@ export const redirectGuard: CanActivateFn = async () => {
   const user = await supabase.getUser();
 
   if (user) {
-    return router.createUrlTree(['/health']);
+    return router.createUrlTree([DEFAULT_AUTHENTICATED_ROUTE]);
   }
 
   return true;

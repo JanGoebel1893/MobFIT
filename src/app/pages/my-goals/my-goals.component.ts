@@ -140,17 +140,25 @@ export class MyGoalsComponent implements OnInit {
   }
 
   async onSetGoalsSubmit(values: GoalsMetricValues): Promise<void> {
+    const user = await this.supabase.getUser();
+    if (!user) return;
+
+    try {
+      await this.supabase.upsertGoalTargets(user.id, {
+        steps:        this.toInt(values.steps),
+        jog_km:       this.toFloat(values.jogKm),
+        bike_min:     this.toInt(values.bikeMin),
+        activity_min: this.toInt(values.activityMin),
+      });
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Ziele konnten nicht gespeichert werden.';
+      alert(msg);
+      return;
+    }
+
     this.setGoalsValues.set(values);
     this.rebuildTiles();
     this.closeModal();
-    const user = await this.supabase.getUser();
-    if (!user) return;
-    await this.supabase.upsertGoalTargets(user.id, {
-      steps:        this.toInt(values.steps),
-      jog_km:       this.toFloat(values.jogKm),
-      bike_min:     this.toInt(values.bikeMin),
-      activity_min: this.toInt(values.activityMin),
-    });
   }
 
   async onProgressAdd(entry: ProgressEntry): Promise<void> {
@@ -164,7 +172,13 @@ export class MyGoalsComponent implements OnInit {
       activity_min: entry.metric === 'activityMin' ? this.toIntOrNull(entry.value)   : null,
     };
 
-    await this.supabase.addActivityLog(user.id, payload);
+    try {
+      await this.supabase.addActivityLog(user.id, payload);
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Fortschritt konnte nicht gespeichert werden.';
+      alert(`${msg}\n\nPrüfe in Supabase: RLS für „activity_logs“, Unique (user_id, date) bei mehreren Einträgen pro Tag.`);
+      return;
+    }
 
     switch (entry.metric) {
       case 'steps':       this.todaySums.steps       += this.toInt(entry.value);   break;

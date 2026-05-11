@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { DEFAULT_AUTHENTICATED_ROUTE } from '../../core/auth.constants';
 import { SupabaseService } from '../../services/supabase.service';
 import { isValidEmailFormat } from '../../shared/utils/numeric-form.utils';
 
@@ -54,8 +55,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.isLoading = true;
 
     try {
-      await this.supabase.signIn(this.email.trim(), this.password, true);
-      this.router.navigate(['/health']);
+      await this.supabase.signIn(this.email.trim(), this.password, this.remember);
+      await this.router.navigate([DEFAULT_AUTHENTICATED_ROUTE]);
     } catch (error: any) {
       this.errorMessage = 'Login fehlgeschlagen. Bitte Email und Passwort prüfen.';
       console.error('Login error:', error);

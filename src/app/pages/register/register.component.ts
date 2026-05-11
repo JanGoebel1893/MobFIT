@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { DEFAULT_AUTHENTICATED_ROUTE } from '../../core/auth.constants';
 import { SupabaseService } from '../../services/supabase.service';
 import { LucideAngularModule } from 'lucide-angular';
 import { LockIcon, MailIcon, UserIcon } from 'lucide-angular/src/icons';
@@ -94,9 +95,11 @@ export class RegisterComponent implements OnInit, OnDestroy {
         this.email, this.password,
         this.username, this.age!, this.heightCm!
       );
-      this.router.navigate(['/health']);
-    } catch(error) {
-      console.error("Error:", error);
+      await this.router.navigate([DEFAULT_AUTHENTICATED_ROUTE]);
+    } catch(error: unknown) {
+      console.error('Registrierung:', error);
+      const msg = error instanceof Error ? error.message : 'Registrierung fehlgeschlagen.';
+      alert(msg);
     } finally {
       this.isLoading = false;
     }
