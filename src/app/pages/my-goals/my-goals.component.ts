@@ -15,6 +15,17 @@ type GoalsStatsRange = 'week' | 'month';
 const DE_DAY_LABELS = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
 const WEEK_LABELS   = ['W1', 'W2', 'W3', 'W4'];
 
+const GOALS_MOTIVATION_QUOTES = [
+  'Sicher, dass du den Kühlschrank heute noch aufmachen willst?',
+  'So wirst du nie einen Partner bekommen',
+  'Dein zukünftiges Ich schämt sich gerade für dich',
+  'Wenn Ausreden Kalorien verbrennen würden, wärst du schon Weltmeister',
+  'Wenn ich darauf wetten würde, dass du es nicht schaffst, würde ich reich werden',
+  'Dein Spiegelbild schämt sich für dich',
+  'Selbst deine Ausreden haben Übergewicht',
+  'Hör auf zu schwitzen, bevor du trainierst',
+] as const;
+
 @Component({
   selector: 'app-my-goals',
   standalone: true,
@@ -67,6 +78,8 @@ export class MyGoalsComponent implements OnInit {
   constructor(private supabase: SupabaseService) {}
 
   async ngOnInit(): Promise<void> {
+    this.pickRandomMotivationQuote();
+
     const user = await this.supabase.getUser();
     if (!user) { this.isLoading.set(false); return; }
 
@@ -301,48 +314,13 @@ export class MyGoalsComponent implements OnInit {
       { ...this.tiles[2], currentValue: String(bikeMin),               goalText: bikeGoal     ? `/ ${bikeGoal} min`                      : '/ –', progressPercent: this.calcPercent(bikeMin, bikeGoal),   goalReached: bikeGoal > 0     && bikeMin      >= bikeGoal     },
       { ...this.tiles[3], currentValue: String(activityMin),           goalText: activityGoal ? `/ ${activityGoal} min`                  : '/ –', progressPercent: this.calcPercent(activityMin, activityGoal), goalReached: activityGoal > 0 && activityMin >= activityGoal },
     ];
-
-   this.quote.set(this.calcQuote());
   }
 
   // ─── Helpers ────────────────────────────────────────────────────
 
-  private calcQuote(): string {
-    const score = Math.round(
-      this.tiles
-        .filter(t => t.goalText !== '/ –')   // Ziele ohne Goal ignorieren
-        .reduce((sum, t) => sum + t.progressPercent, 0) /
-      Math.max(1, this.tiles.filter(t => t.goalText !== '/ –').length)
-    );
-
-    if (score >= 70) {
-      const quotes = [
-        'Du bist auf Kurs! 💪',
-        'Stark! Weiter so!',
-        'Heute läuft\'s bei dir!',
-        'Fast am Ziel — nicht nachlassen!',
-        'Richtig gut heute, weiter!',
-      ];
-      return quotes[Math.floor(Math.random() * quotes.length)];
-    } else if (score >= 35) {
-      const quotes = [
-        'Solider Start — mehr geht noch!',
-        'Du bist dabei, weiter dranbleiben!',
-        'Halbzeit — pack noch was drauf!',
-        'Nicht schlecht, aber du kannst mehr.',
-        'Der zweite Schritt ist leichter als der erste.',
-      ];
-      return quotes[Math.floor(Math.random() * quotes.length)];
-    } else {
-      const quotes = [
-        'Da is meine Oma ja besser!',
-        'Heute wäre ein guter Tag anzufangen…',
-        'Die Couch ruft — ignorier sie!',
-        'Null Punkte? Na dann mal los!',
-        'Selbst ein kleiner Schritt zählt.',
-      ];
-      return quotes[Math.floor(Math.random() * quotes.length)];
-    }
+  private pickRandomMotivationQuote(): void {
+    const i = Math.floor(Math.random() * GOALS_MOTIVATION_QUOTES.length);
+    this.quote.set(GOALS_MOTIVATION_QUOTES[i]);
   }
 
   private calcPercent(current: number, goal: number): number {
