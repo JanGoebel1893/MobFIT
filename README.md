@@ -1,59 +1,96 @@
-# Mobfit
+# MobFIT
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.13.
+Web-Frontend für **MobFIT** – ein Fitness- und Gesundheits-Dashboard mit persönlichen Zielen, Tagesaktivität und Health-Tracking. Die App spricht mit einem **Supabase**-Backend (Auth + Postgres).
 
-## Development server
+## Funktionen
 
-To start a local development server, run:
+- **Registrierung & Login** mit E-Mail/Passwort (Supabase Auth)
+- **Health-Dashboard**: Kalorien, Schlaf, Gewicht, Wasser; Bearbeitung im Modal; Wochen-/Monats-Charts mit Vergleich zur Vorperiode
+- **My Goals**: Tagesfortschritt (Schritte, Joggen, Radfahren, Aktivitätsminuten), Ziele setzen, Fortschritt eintragen; Charts analog zu Health
+- **Rechtliches**: Impressum & Datenschutz (öffentliche Routen)
+- **Abmelden** über Route `/logout` (Supabase `signOut`)
 
-```bash
-ng serve
-```
+## Tech-Stack
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+| Bereich | Technologie |
+|--------|-------------|
+| Framework | [Angular](https://angular.dev) 19 (Standalone Components) |
+| Backend | [Supabase](https://supabase.com) (`@supabase/supabase-js`) |
+| Icons | [lucide-angular](https://lucide.dev) |
+| Styling | Komponenten-CSS, gemeinsame Layout-Styles unter `src/app/shared/styles/` |
 
-## Code scaffolding
+## Voraussetzungen
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- **Node.js** (LTS empfohlen, z. B. 20.x)
+- **npm** (mit Node mitgeliefert)
 
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+## Installation
 
 ```bash
-ng build
+git clone <repository-url>
+cd MobFIT
+npm install
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Supabase konfigurieren
 
-## Running unit tests
+Die Verbindung erfolgt über `src/environments/environment.ts` (Entwicklung) bzw. `src/environments/environment.prod.ts` (Production-Build).
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Trage dort ein:
+
+- `supabaseUrl` – Project URL aus dem Supabase-Dashboard  
+- `supabaseKey` – z. B. der **anon public** API-Key (nie den Service-Role-Key im Frontend)
+
+**Hinweis:** Geheime Keys nicht in öffentliche Repos committen. Für Teams eignen sich z. B. lokale Overrides, CI-Secrets oder `environment.prod.ts` nur mit Platzhaltern im Repo und echte Werte beim Deploy.
+
+Erwartete **Datenbank-/Auth-Struktur** (Auszug, muss zu euren Supabase-Tabellen passen):
+
+- `profiles` – Nutzerprofil (u. a. `username`, `age`, `height`)
+- `health_entries` – Tageswerte (`user_id`, `date`, Kalorien, Schlaf, Gewicht, Wasser)
+- `goal_targets` – Ziele pro Nutzer
+- `activity_logs` – Aktivität pro Tag (`steps`, `jog_km`, `bike_min`, `activity_min`)
+
+## Entwicklung
 
 ```bash
-ng test
+npm start
 ```
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
+Entspricht `ng serve` (Standard: **http://localhost:4200/**, Hot Reload).
 
 ```bash
-ng e2e
+ng serve --configuration development
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Explizit die Development-Build-Konfiguration nutzen (siehe `angular.json`).
 
-## Additional Resources
+## Production-Build
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+```bash
+npm run build
+```
+
+Ausgabe: `dist/mobfit/`. Für Production werden per `fileReplacements` die Umgebungswerte aus `environment.prod.ts` eingebunden – dort `supabaseUrl` und `supabaseKey` vor dem Deploy setzen.
+
+```
+src/app/
+├── pages/           # Routen-Seiten (login, register, health, my-goals, …)
+├── shared/          # Wiederverwendbare UI (Modals, Cards, Top-Nav, …)
+├── services/        # u. a. SupabaseService
+├── guards/          # authGuard, redirectGuard, logoutGuard
+└── shared/utils/    # Hilfen (z. B. lokales Datum, Formular-Validierung)
+```
+
+## Wichtige Routen
+
+| Pfad | Beschreibung |
+|------|----------------|
+| `/login`, `/register` | Anmeldung / Registrierung |
+| `/health` | Health-Dashboard (Auth) |
+| `/my-goals` | Ziele & Aktivität (Auth) |
+| `/logout` | Abmeldung (Guard ruft `signOut` auf) |
+| `/datenschutz`, `/impressum` | Statische Infoseiten |
+
+## Angular CLI
+
+Projekt erzeugt mit Angular CLI **19.2.x**. Weitere Befehle: [Angular CLI – Dokumentation](https://angular.dev/tools/cli).
