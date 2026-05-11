@@ -34,6 +34,8 @@
           [metricOptions]="weeklyMetricOptions"
           [showRangeToggle]="true"
           [range]="statsRange()"
+          [daysByMetric]="chartWeek()"
+          [daysByMetricMonth]="chartMonth()"
           (rangeChange)="setStatsRange($event)"
         />
       </div>
