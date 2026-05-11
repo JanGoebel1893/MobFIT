@@ -7,6 +7,7 @@ import { GoalsMetricModalComponent, GoalsMetricValues, ProgressEntry } from '../
 import { WeeklyProgressCardComponent, WeeklyDayData } from '../../shared/weekly-progress-card/weekly-progress-card.component';
 import { DashboardFooterComponent } from '../../shared/dashboard-footer/dashboard-footer.component';
 import { SupabaseService } from '../../services/supabase.service';
+import { toLocalDateString } from '../../shared/utils/local-date.utils';
 
 type GoalsModalKind = 'off' | 'setGoals' | 'addProgress';
 type GoalsStatsRange = 'week' | 'month';
@@ -14,6 +15,9 @@ type GoalsStatsRange = 'week' | 'month';
 // Mo=0 … So=6  →  deutsch: Mo Di Mi Do Fr Sa So
 const DE_DAY_LABELS = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
 const WEEK_LABELS   = ['W1', 'W2', 'W3', 'W4'];
+
+/** Monats-Chart braucht bis zu 55 Tage zurück; Puffer für lokale Daten → 70 Tage laden */
+const ACTIVITY_LOGS_LOOKBACK_DAYS = 69;
 
 const GOALS_MOTIVATION_QUOTES = [
   'Sicher, dass du den Kühlschrank heute noch aufmachen willst?',
@@ -62,6 +66,9 @@ export class MyGoalsComponent implements OnInit {
 
   private todaySums = { steps: 0, jogKm: 0, bikeMin: 0, activityMin: 0 };
 
+  /** Für Charts und Vergleichszeile (ca. 10 Wochen) */
+  activityLogsCache = signal<any[]>([]);
+
   tiles: HealthMetricTileConfig[] = [
     { label: 'Schritte',          currentValue: '0', goalText: '/ –',      progressPercent: 0, accent: 'blue',  icon: 'steps' },
     { label: 'Joggen',            currentValue: '0', currentSuffix: ' km',  goalText: '/ –',   progressPercent: 0, accent: 'blue',  icon: 'run'  },
@@ -83,15 +90,13 @@ export class MyGoalsComponent implements OnInit {
     const user = await this.supabase.getUser();
     if (!user) { this.isLoading.set(false); return; }
 
-    const today     = new Date();
-    const sinceWeek  = this.isoDate(this.addDays(today, -6));   // letzte 7 Tage
-    const sincePrev  = this.isoDate(this.addDays(today, -13));  // 7 Tage davor (Vorwoche)
-    const sinceMonth = this.isoDate(this.addDays(today, -27));  // letzte 28 Tage
+    const today = new Date();
+    const sinceWide = this.isoDate(this.addDays(today, -ACTIVITY_LOGS_LOOKBACK_DAYS));
 
     const [goalsRes, logsRes, rangeRes] = await Promise.all([
       this.supabase.getGoalTargets(user.id),
       this.supabase.getTodayActivitySums(user.id),
-      this.supabase.getActivityLogsRange(user.id, sincePrev),
+      this.supabase.getActivityLogsRange(user.id, sinceWide),
     ]);
 
     // Ziele laden
@@ -118,14 +123,10 @@ export class MyGoalsComponent implements OnInit {
       );
     }
 
-    // Chart-Daten aufbauen
-    if (rangeRes.data) {
-      const logs = rangeRes.data;
-      this.chartWeek.set(this.buildWeekChart(logs, today));
-      this.chartMonth.set(this.buildMonthChart(
-        await this.loadMonthLogs(user.id, sinceMonth, today), today
-      ));
-    }
+    this.activityLogsCache.set(rangeRes.data ?? []);
+    const logs = this.activityLogsCache();
+    this.chartWeek.set(this.buildWeekChart(logs, today));
+    this.chartMonth.set(this.buildMonthChart(logs, today));
 
     this.rebuildTiles();
     this.isLoading.set(false);
@@ -134,7 +135,9 @@ export class MyGoalsComponent implements OnInit {
   openSetGoalsModal(): void  { this.modal = 'setGoals';    }
   openProgressModal(): void  { this.modal = 'addProgress'; }
   closeModal(): void         { this.modal = 'off';         }
-  setStatsRange(r: GoalsStatsRange): void { this.statsRange.set(r); }
+  setStatsRange(r: GoalsStatsRange): void {
+    this.statsRange.set(r);
+  }
 
   async onSetGoalsSubmit(values: GoalsMetricValues): Promise<void> {
     this.setGoalsValues.set(values);
@@ -170,11 +173,13 @@ export class MyGoalsComponent implements OnInit {
       case 'activityMin': this.todaySums.activityMin += this.toInt(entry.value);   break;
     }
 
-    // Chart-Daten nach neuem Eintrag neu laden
-    const today     = new Date();
-    const sincePrev = this.isoDate(this.addDays(today, -13));
-    const { data }  = await this.supabase.getActivityLogsRange(user.id, sincePrev);
-    if (data) this.chartWeek.set(this.buildWeekChart(data, today));
+    const today = new Date();
+    const sinceWide = this.isoDate(this.addDays(today, -ACTIVITY_LOGS_LOOKBACK_DAYS));
+    const { data } = await this.supabase.getActivityLogsRange(user.id, sinceWide);
+    this.activityLogsCache.set(data ?? []);
+    const logs = this.activityLogsCache();
+    this.chartWeek.set(this.buildWeekChart(logs, today));
+    this.chartMonth.set(this.buildMonthChart(logs, today));
 
     this.rebuildTiles();
   }
@@ -182,8 +187,8 @@ export class MyGoalsComponent implements OnInit {
   // ─── Chart-Builder ──────────────────────────────────────────────
 
   /**
-   * Baut Wochen-Chart: aktuelle Woche (letzte 7 Tage) vs. Vorwoche (7 Tage davor).
-   * Normalisierung: Maximum der Vorwoche = 1.0
+   * Wochen-Chart: pro Wochentag zwei Balken (diese Woche / Vorwoche).
+   * Pro Tag: Höhe = Anteil am max(dieser Tag, gleicher Tag Vorwoche) → direkter Längenvergleich.
    */
   private buildWeekChart(
     logs: any[],
@@ -202,35 +207,26 @@ export class MyGoalsComponent implements OnInit {
     const todayDow = (today.getDay() + 6) % 7; // Mo=0 … So=6
 
     for (const { key, field } of metrics) {
-      // Tagessummen pro Datum
       const sumByDate: Record<string, number> = {};
       for (const row of logs) {
         const v = Number(row[field] ?? 0);
         if (v > 0) sumByDate[row.date] = (sumByDate[row.date] ?? 0) + v;
       }
 
-      // Aktuelle Woche: Mo dieser Woche bis heute
       const currWeekDays: WeeklyDayData[] = [];
-      const maxPrev = Math.max(
-        1,
-        ...Array.from({ length: 7 }, (_, i) => {
-          const d = this.isoDate(this.addDays(today, i - 7 - todayDow));
-          return sumByDate[d] ?? 0;
-        })
-      );
-
       for (let i = 0; i < 7; i++) {
-        const date      = this.addDays(today, i - todayDow);
-        const dateIso   = this.isoDate(date);
-        const isPast    = dateIso <= todayIso;
-        const currVal   = sumByDate[dateIso] ?? 0;
-        const prevDate  = this.isoDate(this.addDays(date, -7));
-        const prevVal   = sumByDate[prevDate] ?? 0;
+        const date = this.addDays(today, i - todayDow);
+        const dateIso = this.isoDate(date);
+        const isPast = dateIso <= todayIso;
+        const currVal = sumByDate[dateIso] ?? 0;
+        const prevDate = this.isoDate(this.addDays(date, -7));
+        const prevVal = sumByDate[prevDate] ?? 0;
+        const denom = Math.max(1, currVal, prevVal);
 
         currWeekDays.push({
           shortLabel:     DE_DAY_LABELS[i],
-          current:        isPast ? Math.min(1, currVal / maxPrev) : 0,
-          previous:       Math.min(1, prevVal / maxPrev),
+          current:        isPast ? Math.min(1, currVal / denom) : 0,
+          previous:       Math.min(1, prevVal / denom),
           hasCurrent:     isPast,
           isHighlightDay: dateIso === todayIso,
         });
@@ -278,24 +274,19 @@ export class MyGoalsComponent implements OnInit {
         }
       }
 
-      const maxVal = Math.max(1, ...weekSums, ...weekSumsPrev);
-
-      result[key] = WEEK_LABELS.map((label, i) => ({
-        shortLabel:     label,
-        current:        Math.min(1, weekSums[i]     / maxVal),
-        previous:       Math.min(1, weekSumsPrev[i] / maxVal),
-        hasCurrent:     true,
-        isHighlightDay: i === 3,
-      }));
+      result[key] = WEEK_LABELS.map((label, i) => {
+        const denom = Math.max(1, weekSums[i], weekSumsPrev[i]);
+        return {
+          shortLabel:     label,
+          current:        Math.min(1, weekSums[i] / denom),
+          previous:       Math.min(1, weekSumsPrev[i] / denom),
+          hasCurrent:     true,
+          isHighlightDay: i === 3,
+        };
+      });
     }
 
     return result;
-  }
-
-  private async loadMonthLogs(userId: string, since: string, today: Date) {
-    const sincePrevMonth = this.isoDate(this.addDays(today, -55));
-    const { data } = await this.supabase.getActivityLogsRange(userId, sincePrevMonth);
-    return data ?? [];
   }
 
   // ─── Tile-Builder ────────────────────────────────────────────────
@@ -309,10 +300,10 @@ export class MyGoalsComponent implements OnInit {
     const { steps, jogKm, bikeMin, activityMin } = this.todaySums;
 
     this.tiles = [
-      { ...this.tiles[0], currentValue: steps.toLocaleString('de-DE'), goalText: stepsGoal    ? `/ ${stepsGoal.toLocaleString('de-DE')}` : '/ –', progressPercent: this.calcPercent(steps, stepsGoal),    goalReached: stepsGoal > 0    && steps       >= stepsGoal    },
-      { ...this.tiles[1], currentValue: this.formatNumber(jogKm),      goalText: jogGoal      ? `/ ${this.formatNumber(jogGoal)} km`     : '/ –', progressPercent: this.calcPercent(jogKm, jogGoal),      goalReached: jogGoal > 0      && jogKm        >= jogGoal      },
-      { ...this.tiles[2], currentValue: String(bikeMin),               goalText: bikeGoal     ? `/ ${bikeGoal} min`                      : '/ –', progressPercent: this.calcPercent(bikeMin, bikeGoal),   goalReached: bikeGoal > 0     && bikeMin      >= bikeGoal     },
-      { ...this.tiles[3], currentValue: String(activityMin),           goalText: activityGoal ? `/ ${activityGoal} min`                  : '/ –', progressPercent: this.calcPercent(activityMin, activityGoal), goalReached: activityGoal > 0 && activityMin >= activityGoal },
+      { ...this.tiles[0], currentValue: steps.toLocaleString('de-DE'), goalText: stepsGoal ? `/ ${stepsGoal.toLocaleString('de-DE')}` : '/ –', progressPercent: this.calcPercent(steps, stepsGoal), goalReached: stepsGoal > 0 && steps >= stepsGoal },
+      { ...this.tiles[1], currentValue: this.formatNumber(jogKm), goalText: jogGoal ? `/ ${this.formatNumber(jogGoal)} km` : '/ –', progressPercent: this.calcPercent(jogKm, jogGoal), goalReached: jogGoal > 0 && jogKm >= jogGoal },
+      { ...this.tiles[2], currentValue: String(bikeMin), goalText: bikeGoal ? `/ ${bikeGoal} min` : '/ –', progressPercent: this.calcPercent(bikeMin, bikeGoal), goalReached: bikeGoal > 0 && bikeMin >= bikeGoal },
+      { ...this.tiles[3], currentValue: String(activityMin), goalText: activityGoal ? `/ ${activityGoal} min` : '/ –', progressPercent: this.calcPercent(activityMin, activityGoal), goalReached: activityGoal > 0 && activityMin >= activityGoal },
     ];
   }
 
@@ -334,8 +325,9 @@ export class MyGoalsComponent implements OnInit {
     return d;
   }
 
+  /** Lokales Kalenderdatum — gleiche Konvention wie `activity_logs.date` / Supabase-Abfragen */
   private isoDate(date: Date): string {
-    return date.toISOString().split('T')[0];
+    return toLocalDateString(date);
   }
 
   private toInt(value: string): number {

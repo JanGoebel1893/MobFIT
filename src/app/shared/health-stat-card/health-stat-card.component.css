@@ -71,6 +71,18 @@
   color: #414755;
 }
 
+.stat-card__period {
+  margin: -4px 0 10px;
+  width: 100%;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 14px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #94a3b8;
+}
+
 .stat-card__value-row {
   display: flex;
   flex-direction: row;
@@ -122,4 +134,9 @@
   font-size: 12px;
   line-height: 16px;
   color: #006b27;
+}
+
+.stat-card__trend-text--muted {
+  color: #64748b;
+  font-weight: 500;
 }
