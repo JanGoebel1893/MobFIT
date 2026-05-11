@@ -99,9 +99,6 @@ export class HealthComponent implements OnInit {
   }
 
   async onHealthDataSave(v: HealthDataFormValues): Promise<void> {
-    this.currentFormValues.set(v);
-    this.showHealthDataModal = false;
-
     const user = await this.supabase.getUser();
     if (!user) return;
 
@@ -111,13 +108,22 @@ export class HealthComponent implements OnInit {
     const wgtNum = parseFloat(v.weightKg.trim().replace(',', '.'));
     const watNum = parseFloat(v.waterLiters.trim().replace(',', '.'));
 
-    await this.supabase.upsertHealthEntry(user.id, {
-      calories:    isNaN(calNum) ? null : calNum,
-      sleep_hours: isNaN(shNum)  ? null : shNum,
-      sleep_mins:  isNaN(smNum)  ? null : smNum,
-      weight_kg:   isNaN(wgtNum) ? null : wgtNum,
-      water:       isNaN(watNum) ? null : watNum,
-    });
+    try {
+      await this.supabase.upsertHealthEntry(user.id, {
+        calories:    isNaN(calNum) ? null : calNum,
+        sleep_hours: isNaN(shNum)  ? null : shNum,
+        sleep_mins:  isNaN(smNum)  ? null : smNum,
+        weight_kg:   isNaN(wgtNum) ? null : wgtNum,
+        water:       isNaN(watNum) ? null : watNum,
+      });
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Health-Daten konnten nicht gespeichert werden.';
+      alert(`${msg}\n\nPrüfe in Supabase: Row Level Security (INSERT/UPDATE) für „health_entries“ und Unique (user_id, date) für Upsert.`);
+      return;
+    }
+
+    this.currentFormValues.set(v);
+    this.showHealthDataModal = false;
 
     const today = new Date();
     const sinceWide = this.isoDate(this.addDays(today, -HEALTH_ENTRIES_LOOKBACK_DAYS));

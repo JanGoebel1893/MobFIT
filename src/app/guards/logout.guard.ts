@@ -6,7 +6,11 @@ export const logoutGuard: CanActivateFn = async () => {
   const supabase = inject(SupabaseService);
   const router = inject(Router);
 
-  await supabase.signOut();
+  try {
+    await supabase.signOut();
+  } catch (e) {
+    console.warn('Abmelden (Server):', e);
+  }
   await router.navigate(['/login']);
   return false;
 };
