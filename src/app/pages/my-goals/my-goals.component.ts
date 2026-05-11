@@ -58,6 +58,8 @@ export class MyGoalsComponent implements OnInit {
     { label: 'Aktivitätsminuten', currentValue: '0', currentSuffix: ' min', goalText: '/ –',   progressPercent: 0, accent: 'green', icon: 'bolt' },
   ];
 
+  quote = signal<string>('');
+
   // Chart-Daten für WeeklyProgressCard
   chartWeek  = signal<Partial<Record<string, readonly WeeklyDayData[]>>>({});
   chartMonth = signal<Partial<Record<string, readonly WeeklyDayData[]>>>({});
@@ -299,9 +301,49 @@ export class MyGoalsComponent implements OnInit {
       { ...this.tiles[2], currentValue: String(bikeMin),               goalText: bikeGoal     ? `/ ${bikeGoal} min`                      : '/ –', progressPercent: this.calcPercent(bikeMin, bikeGoal),   goalReached: bikeGoal > 0     && bikeMin      >= bikeGoal     },
       { ...this.tiles[3], currentValue: String(activityMin),           goalText: activityGoal ? `/ ${activityGoal} min`                  : '/ –', progressPercent: this.calcPercent(activityMin, activityGoal), goalReached: activityGoal > 0 && activityMin >= activityGoal },
     ];
+
+   this.quote.set(this.calcQuote());
   }
 
   // ─── Helpers ────────────────────────────────────────────────────
+
+  private calcQuote(): string {
+    const score = Math.round(
+      this.tiles
+        .filter(t => t.goalText !== '/ –')   // Ziele ohne Goal ignorieren
+        .reduce((sum, t) => sum + t.progressPercent, 0) /
+      Math.max(1, this.tiles.filter(t => t.goalText !== '/ –').length)
+    );
+
+    if (score >= 70) {
+      const quotes = [
+        'Du bist auf Kurs! 💪',
+        'Stark! Weiter so!',
+        'Heute läuft\'s bei dir!',
+        'Fast am Ziel — nicht nachlassen!',
+        'Richtig gut heute, weiter!',
+      ];
+      return quotes[Math.floor(Math.random() * quotes.length)];
+    } else if (score >= 35) {
+      const quotes = [
+        'Solider Start — mehr geht noch!',
+        'Du bist dabei, weiter dranbleiben!',
+        'Halbzeit — pack noch was drauf!',
+        'Nicht schlecht, aber du kannst mehr.',
+        'Der zweite Schritt ist leichter als der erste.',
+      ];
+      return quotes[Math.floor(Math.random() * quotes.length)];
+    } else {
+      const quotes = [
+        'Da is meine Oma ja besser!',
+        'Heute wäre ein guter Tag anzufangen…',
+        'Die Couch ruft — ignorier sie!',
+        'Null Punkte? Na dann mal los!',
+        'Selbst ein kleiner Schritt zählt.',
+      ];
+      return quotes[Math.floor(Math.random() * quotes.length)];
+    }
+  }
 
   private calcPercent(current: number, goal: number): number {
     if (!goal || goal <= 0) return 0;
