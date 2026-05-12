@@ -56,14 +56,6 @@
             />
           </div>
 
-          <div class="login-form__row">
-            <label class="login-form__remember">
-              <input type="checkbox" name="remember" [(ngModel)]="remember" />
-              <span>Remember me</span>
-            </label>
-            <a href="#" class="login-form__forgot" (click)="$event.preventDefault()">Forgot password?</a>
-          </div>
-
           @if (errorMessage) {
             <p class="login-form__error" role="alert">{{ errorMessage }}</p>
           }
