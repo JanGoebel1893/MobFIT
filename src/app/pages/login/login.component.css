@@ -224,51 +224,6 @@
   box-shadow: 0 0 0 2px rgba(0, 88, 188, 0.25);
 }
 
-.login-form__row {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.login-form__remember {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0;
-  font-family: 'Inter', system-ui, sans-serif;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
-  color: #414755;
-  cursor: pointer;
-  user-select: none;
-}
-
-.login-form__remember input {
-  box-sizing: border-box;
-  width: 16px;
-  height: 16px;
-  margin: 0;
-  accent-color: #0058bc;
-  border-radius: 4px;
-}
-
-.login-form__forgot {
-  font-family: 'Inter', system-ui, sans-serif;
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 20px;
-  color: #0058bc;
-  text-decoration: none;
-}
-
-.login-form__forgot:hover {
-  text-decoration: underline;
-}
-
 .login-form__submit {
   display: flex;
   justify-content: center;

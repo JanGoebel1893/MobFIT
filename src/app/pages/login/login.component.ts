@@ -14,9 +14,7 @@ import { isValidEmailFormat } from '../../shared/utils/numeric-form.utils';
 })
 export class LoginComponent implements OnInit, OnDestroy {
   email = '';
-  username = '';
   password = '';
-  remember = false;
   errorMessage = '';
   isLoading = false;
 
@@ -55,7 +53,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.isLoading = true;
 
     try {
-      await this.supabase.signIn(this.email.trim(), this.password, this.remember);
+      await this.supabase.signIn(this.email.trim(), this.password);
       await this.router.navigate([DEFAULT_AUTHENTICATED_ROUTE]);
     } catch (error: any) {
       this.errorMessage = 'Login fehlgeschlagen. Bitte Email und Passwort prüfen.';

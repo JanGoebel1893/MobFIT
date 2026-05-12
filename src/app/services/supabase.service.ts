@@ -46,20 +46,12 @@ export class SupabaseService {
     this.throwIfDbError("profiles.insert", profileError);
   }
 
-  async signIn(email: string, password: string, remember: boolean) {
+  async signIn(email: string, password: string) {
     const { data, error } = await this.supabase.auth.signInWithPassword({
       email,
       password
     });
     if (error) throw error;
-
-    if (typeof window !== "undefined") {
-      if (remember) {
-        localStorage.setItem("mobfit_remember_me", "1");
-      } else {
-        localStorage.removeItem("mobfit_remember_me");
-      }
-    }
 
     return data;
   }

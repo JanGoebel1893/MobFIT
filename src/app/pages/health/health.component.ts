@@ -256,7 +256,6 @@ export class HealthComponent implements OnInit {
       {
         variant: 'calories',
         label: 'Kalorien',
-        periodLabel: b.periodTitle,
         primaryValue: curCal.toLocaleString('de-DE'),
         primaryUnit: 'kcal',
         trendText: '',
@@ -264,14 +263,12 @@ export class HealthComponent implements OnInit {
       {
         variant: 'sleep',
         label: 'Schlaf',
-        periodLabel: b.periodTitle,
         primaryValue: this.formatSleepMinutes(curSleep),
         trendText: '',
       },
       {
         variant: 'weight',
         label: 'Gewicht',
-        periodLabel: b.periodTitle,
         primaryValue: curW != null ? curW.toFixed(1).replace('.', ',') : '0',
         primaryUnit: 'kg',
         trendText: '',
@@ -279,7 +276,6 @@ export class HealthComponent implements OnInit {
       {
         variant: 'water',
         label: 'Wasser',
-        periodLabel: b.periodTitle,
         primaryValue: curWater.toFixed(1).replace('.', ','),
         primaryUnit: 'Liter',
         trendText: '',
@@ -295,8 +291,6 @@ export class HealthComponent implements OnInit {
     curEnd: string;
     prevStart: string;
     prevEnd: string;
-    periodTitle: string;
-    prevTitle: string;
   } {
     const curEnd = this.isoDate(today);
     if (range === 'week') {
@@ -310,8 +304,6 @@ export class HealthComponent implements OnInit {
         curEnd,
         prevStart,
         prevEnd,
-        periodTitle: 'Diese Woche',
-        prevTitle: 'Vorwoche',
       };
     }
     const curStart = this.isoDate(this.addDays(today, -27));
@@ -322,8 +314,6 @@ export class HealthComponent implements OnInit {
       curEnd,
       prevStart,
       prevEnd,
-      periodTitle: 'Letzte 28 Tage',
-      prevTitle: 'Vorherige 28 Tage',
     };
   }
 
